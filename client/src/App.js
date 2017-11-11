@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
 import './App.css';
+import Options from './components/Options.js';
+import MusicScore from './components/MusicScore.js';
 
 class App extends Component {
-  state = {users: [ ]}
+  state = {
+    users: [ ],
+    nPitchClasses: 3,
+    pitchClasses: ['C','D','E']
+  }
 
   componentDidMount() {
     fetch('/users')
@@ -17,6 +23,8 @@ class App extends Component {
         {this.state.users.map(user =>
           <div key={user.id}>{user.username}</div>
         )}
+        <MusicScore />
+        <Options nPitchClasses={this.state.nPitchClasses} pitchClasses={this.state.pitchClasses} />
       </div>
     );
   }
