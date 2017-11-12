@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import Header from './components/Header.js';
 import Options from './components/Options.js';
 import MusicScore from './components/MusicScore.js';
 
