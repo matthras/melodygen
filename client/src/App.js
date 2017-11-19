@@ -7,8 +7,36 @@ import MusicScore from './components/MusicScore.js';
 class App extends Component {
   state = {
     users: [ ],
+    anacrusis: false,
+    nPitches: 6,
     nPitchClasses: 3,
-    pitchClasses: ['C','D','E']
+    pitchClasses: ['C','D','E'],
+    markovChain: [
+      [0.4, 0.2, 0.4],
+      [0.5, 0.3, 0.2],
+      [0.1, 0.4, 0.5]
+    ],
+    noteSequence: [],
+
+  }
+
+  startingPitch() {
+    // If anacrusis, return random roll between 4th degree or 7th degree, else start with tonic.
+    return this.state.anacrusis ? :
+  }
+
+  getNextPitch(currentPitch) {
+    var markovChainRow = this.state.markovChain[currentPitch];
+    var diceRoll = Math.random();
+    var probabilityUpperBound = markovChainRow[0];
+    for(var i = 0; i < markovChainRow.length; i++) {
+        if(diceRoll <= probabilityUpperBound) {
+            return i; // Return a number or the next pitch?
+        } else {
+            probabilityUpperBound += markovChainRow[i+1]
+        }
+    }
+    return "Error" // How to do error handling here?
   }
 
   componentDidMount() {
@@ -20,7 +48,10 @@ class App extends Component {
       <div className="App">
         <Header />
         <MusicScore />
-        <Options nPitchClasses={this.state.nPitchClasses} pitchClasses={this.state.pitchClasses} />
+        <Options 
+          nPitchClasses={this.state.nPitchClasses} 
+          pitchClasses={this.state.pitchClasses} 
+        />
       </div>
     );
   }
