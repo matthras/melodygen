@@ -5,19 +5,22 @@ import Options from './components/Options.js';
 import MusicScore from './components/MusicScore.js';
 
 class App extends Component {
-  state = {
-    users: [ ],
-    anacrusis: false,
-    nPitches: 6,
-    nPitchClasses: 3,
-    pitchClasses: ['C','D','E'],
-    markovChain: [
-      [0.4, 0.2, 0.4],
-      [0.5, 0.3, 0.2],
-      [0.1, 0.4, 0.5]
-    ],
-    noteSequence: [],
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      users: [ ],
+      anacrusis: false,
+      nPitches: 6,
+      nPitchClasses: 3,
+      pitchClasses: ['C','D','E'],
+      markovChain: [
+        [0.4, 0.2, 0.4],
+        [0.5, 0.3, 0.2],
+        [0.1, 0.4, 0.5]
+      ],
+      noteSequence: [],
+    }
+    this.getNextPitch = this.getNextPitch.bind(this);
   }
 
   startingPitch() {
