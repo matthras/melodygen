@@ -16,8 +16,9 @@ class App extends Component {
       [0.5, 0.3, 0.2],
       [0.1, 0.4, 0.5]
     ],
-    noteSequence: [],
-    timeSignature: '4/4'
+    noteSequence: ['C','D','E','F'],
+    nBeats: 4,
+    beatValue: 4
   }
 
   startingPitch() {
@@ -52,6 +53,9 @@ class App extends Component {
       <div className="App">
         <Header />
         <MusicScore 
+          nBeats={this.state.nBeats}
+          beatValue={this.state.beatValue}
+          nPitches={this.state.nPitches}
           timeSignature={this.state.timeSignature}
           noteSequence={this.state.noteSequence}
         />
