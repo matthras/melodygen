@@ -8,9 +8,51 @@ import { Formatter } from 'vexflow/src/formatter';
 import { Renderer } from 'vexflow/src/renderer';
 
 class MusicScore extends Component {
+  constructor(props) {
+    super(props);
+
+    this.convertMusicNote = this.convertMusicNote.bind(this);
+    this.generateMusicScore = this.generateMusicScore.bind(this);
+  }
   // Receives encoded music through props.
   // Renders the actual music onto the page based on stuff passed down from props.
   // Q: How do I make this work with that music score library?
+  convertMusicNote(note) {
+    switch(note){
+      case 'C':
+        return "c/4";
+      case 'D':
+        return "d/4";
+      case 'E':
+        return "e/4";
+    }
+
+  }
+
+  generateMusicScore() {
+    // Construct context
+    const div = document.getElementById("musicScore");
+    let renderer = new Renderer(div, 3);
+    renderer.resize(500,500);
+    let context = renderer.getContext();
+    // Construct stave
+    let stave = new Stave(10, 40, 400);
+    stave.addClef("treble").addTimeSignature(this.props.timeSignature);
+    // Construct notes array
+    const noteSequence = this.props.noteSequence;
+    let notes = [];
+    for(let n = 0; n < this.props.nPitches; n++){
+      notes.push(new StaveNote({
+        clef: "treble",
+        keys: [this.convertMusicNote(noteSequence[n])],
+        duration: "q"        
+      }));
+    }
+    // Create a voice in 4/4 and add notes
+    const voice = new Voice({num_beats: this.props.nBeats, beat_value:this.props.beatValue}).addTickables(notes);
+    // Render voices
+    voice.draw(context, stave);
+  }
 
   componentDidMount() {
     const div = document.getElementById("musicScore");
@@ -49,6 +91,7 @@ class MusicScore extends Component {
   componentDidUpdate() {
 
   }
+
   render() {
     return(
       <div id="musicScore">
