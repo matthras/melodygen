@@ -43,6 +43,12 @@ class MusicScore extends Component {
     // Render voices
     voices.forEach(function(v) { v.draw(context, stave); })
   }
+
+  // Invoked immediately after updating occurs.
+  // Meant for updating the score, since we can only attach the score when the DOM has re-rendered.
+  componentDidUpdate() {
+
+  }
   render() {
     return(
       <div id="musicScore">

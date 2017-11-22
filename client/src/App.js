@@ -8,7 +8,7 @@ class App extends Component {
   state = {
     users: [ ],
     anacrusis: false,
-    nPitches: 6,
+    nPitches: 4,
     nPitchClasses: 3,
     pitchClasses: ['C','D','E'],
     markovChain: [
@@ -17,7 +17,7 @@ class App extends Component {
       [0.1, 0.4, 0.5]
     ],
     noteSequence: [],
-
+    timeSignature: '4/4'
   }
 
   startingPitch() {
@@ -51,7 +51,10 @@ class App extends Component {
     return (
       <div className="App">
         <Header />
-        <MusicScore />
+        <MusicScore 
+          timeSignature={this.state.timeSignature}
+          noteSequence={this.state.noteSequence}
+        />
         <Options 
           nPitchClasses={this.state.nPitchClasses} 
           pitchClasses={this.state.pitchClasses} 
