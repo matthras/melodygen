@@ -22,7 +22,11 @@ class App extends Component {
 
   startingPitch() {
     // If anacrusis, return random roll between 4th degree or 7th degree, else start with tonic.
-    return this.state.anacrusis ? :
+    if(this.state.anacrusis) {
+
+    } else {
+      
+    }
   }
 
   getNextPitch(currentPitch) {
