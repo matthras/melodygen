@@ -8,6 +8,7 @@ class App extends Component {
   state = {
     users: [ ],
     anacrusis: false,
+    clef: "treble",
     nPitches: 4,
     nPitchClasses: 3,
     pitchClasses: ['C','D','E'],
@@ -52,11 +53,11 @@ class App extends Component {
     return (
       <div className="App">
         <Header />
-        <MusicScore 
+        <MusicScore
+          clef={this.state.clef} 
           nBeats={this.state.nBeats}
           beatValue={this.state.beatValue}
           nPitches={this.state.nPitches}
-          timeSignature={this.state.timeSignature}
           noteSequence={this.state.noteSequence}
         />
         <Options 
