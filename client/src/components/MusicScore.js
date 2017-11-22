@@ -1,4 +1,5 @@
-// Component to display the music score
+// Component to display the music score.
+// Role: ONLY to render the music score based on props passed down from App. It doesn't do any calculations whatsoever.
 import React, { Component } from 'react';
 import { Accidental } from 'vexflow/src/accidental';
 import { Stave } from 'vexflow/src/stave';
@@ -14,9 +15,7 @@ class MusicScore extends Component {
     this.convertMusicNote = this.convertMusicNote.bind(this);
     this.generateMusicScore = this.generateMusicScore.bind(this);
   }
-  // Receives encoded music through props.
-  // Renders the actual music onto the page based on stuff passed down from props.
-  // Q: How do I make this work with that music score library?
+  // Possibly a redundant converter function and can be moved to parent component.
   convertMusicNote(note) {
     switch(note){
       case 'C':
