@@ -11,7 +11,8 @@ class App extends Component {
     clef: "treble",
     nPitches: 4,
     nPitchClasses: 3,
-    pitchClasses: ['C','D','E'],
+    pitchClasses: ['C','D','E', 'F', 'G', 'A', 'B'],
+    noteLengthClasses: [1, 2, 4, 8, 16], // Whole note, minim, crotchet, quaver, semiquaver.
     markovChain: [
       [0.4, 0.2, 0.4],
       [0.5, 0.3, 0.2],
