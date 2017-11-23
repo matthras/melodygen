@@ -62,6 +62,14 @@ class MusicScore extends Component {
     voice.draw(context, stave);
   }
 
+  componentWillMount() {
+    // Before re-rendering a new score, remove all instances of old score. 
+    const musicScoreDiv = document.getElementById("musicScore");
+    while(musicScoreDiv.hasChildNodes) {
+      musicScoreDiv.removeChild;
+    }
+  }
+
   componentDidMount() {
     this.generateMusicScore();
   }
