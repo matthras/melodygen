@@ -5,6 +5,11 @@ import Options from './components/Options.js';
 import MusicScore from './components/MusicScore.js';
 
 class App extends Component {
+  constructor(props) {
+    super(props) 
+    
+    this.generateNewScore = this.generateNewScore.bind(this);
+  }
   state = {
     users: [ ],
     anacrusis: false,
@@ -45,15 +50,17 @@ class App extends Component {
     }
     return "Error" // How to do error handling here?
   }
-
-  componentDidMount() {
-
+  generateNewScore() {
+    
   }
 
   render() {
     return (
       <div className="App">
         <Header />
+        <button onClick={this.generateNewScore()}>
+          Generate Music!
+        </button>
         <MusicScore
           clef={this.state.clef} 
           nBeats={this.state.nBeats}
