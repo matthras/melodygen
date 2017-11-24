@@ -65,8 +65,8 @@ class MusicScore extends Component {
   componentWillUpdate() {
     // Before re-rendering a new score, remove all instances of old score. 
     const musicScoreDiv = document.getElementById("musicScore");
-    while(musicScoreDiv.hasChildNodes()) {
-      musicScoreDiv.removeChild;
+    while(musicScoreDiv.firstChild) {
+      musicScoreDiv.removeChild(musicScoreDiv.firstChild);
     }
   }
 
