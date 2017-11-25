@@ -44,12 +44,13 @@ class MusicScore extends Component {
     stave.setContext(context).draw();
     // Construct notes array
     const noteSequence = this.props.noteSequence;
+    const rhythmSequence = this.props.rhythmSequence;
     let notes = [];
     for(let n = 0; n < this.props.nPitches; n++){
       notes.push(new StaveNote({
         clef: this.props.clef,
         keys: [this.convertMusicNote(noteSequence[n])],
-        duration: "q"        
+        duration: rhythmSequence[n]        
       }));
     }
     // Create a voice in 4/4 and add notes

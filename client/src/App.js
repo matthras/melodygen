@@ -19,9 +19,11 @@ class App extends Component {
         [0.1, 0.4, 0.5]
       ],
       noteSequence: ['C','D','E','F'],
+      rhythmSequence: ['q','q','q','q'],
       nBeats: 4,
       beatValue: 4
     }
+    this.generateRhythmSequence = this.generateRhythmSequence.bind(this);
     this.generateNewScore = this.generateNewScore.bind(this);
     this.getNextPitch = this.getNextPitch.bind(this);
     this.startingPitch = this.startingPitch.bind(this);
@@ -48,11 +50,21 @@ class App extends Component {
     return "Error" // How to do error handling here?
   }
   
+  generateRhythmSequence() {
+    let newRhythmSequence = [];
+    for(let b = 0; b < this.state.nBeats; b++){
+      newRhythmSequence.push('q');
+      //newRhythmSequence.push( Math.random()> 0.25 ? 'q' : ['s', 's'])
+    }
+    return newRhythmSequence;
+  }
+
   generateNewScore() {
+    const newRhythmSequence = this.generateRhythmSequence();
     let newNoteSequence = [];
     newNoteSequence.push(this.startingPitch());
     let currentPitch = 0; // This should correspond to the starting pitch
-    for(let n = 1; n < this.state.nPitches; n++){
+    for(let n = 1; n < newRhythmSequence.length; n++){
       currentPitch = this.getNextPitch(currentPitch);
       newNoteSequence.push(this.state.pitchClasses[currentPitch]);
     }
@@ -72,6 +84,7 @@ class App extends Component {
           beatValue={this.state.beatValue}
           nPitches={this.state.nPitches}
           noteSequence={this.state.noteSequence}
+          rhythmSequence={this.state.rhythmSequence}
         />
         <Options  
           pitchClasses={this.state.pitchClasses} 
