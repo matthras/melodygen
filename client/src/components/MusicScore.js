@@ -50,7 +50,7 @@ class MusicScore extends Component {
       notes.push(new StaveNote({
         clef: this.props.clef,
         keys: [this.convertMusicNote(noteSequence[n])],
-        duration: rhythmSequence[n]        
+        duration: rhythmSequence[n].toString()       
       }));
     }
     // Create a voice in 4/4 and add notes

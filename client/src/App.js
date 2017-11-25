@@ -19,7 +19,7 @@ class App extends Component {
         [0.1, 0.4, 0.5]
       ],
       noteSequence: ['C','D','E','F'],
-      rhythmSequence: ['q','q','q','q'],
+      rhythmSequence: [4, 4, 4, 4],
       nBeats: 4,
       beatValue: 4
     }
