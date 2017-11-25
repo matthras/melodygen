@@ -53,14 +53,13 @@ class App extends Component {
   generateRhythmSequence() {
     let newRhythmSequence = [];
     for(let b = 0; b < this.state.nBeats; b++){
-      newRhythmSequence.push('q');
-      //newRhythmSequence.push( Math.random()> 0.25 ? 'q' : ['s', 's'])
+      newRhythmSequence.push( Math.random()> 0.25 ? 4 : [8, 8])
     }
     return newRhythmSequence;
   }
 
   generateNewScore() {
-    const newRhythmSequence = this.generateRhythmSequence();
+    const newRhythmSequence = [].concat(...this.generateRhythmSequence());
     let newNoteSequence = [];
     newNoteSequence.push(this.startingPitch());
     let currentPitch = 0; // This should correspond to the starting pitch
@@ -68,7 +67,7 @@ class App extends Component {
       currentPitch = this.getNextPitch(currentPitch);
       newNoteSequence.push(this.state.pitchClasses[currentPitch]);
     }
-    this.setState({noteSequence: newNoteSequence});
+    this.setState({noteSequence: newNoteSequence, rhythmSequence: newRhythmSequence, nPitches: newRhythmSequence.length});
   }
 
   render() {

@@ -7,6 +7,7 @@ import { StaveNote } from 'vexflow/src/stavenote';
 import { Voice } from 'vexflow/src/voice';
 import { Formatter } from 'vexflow/src/formatter';
 import { Renderer } from 'vexflow/src/renderer';
+import { Beam } from 'vexflow/src/beam';
 
 class MusicScore extends Component {
   constructor(props) {
@@ -58,9 +59,14 @@ class MusicScore extends Component {
       num_beats: this.props.nBeats, 
       beat_value:this.props.beatValue
     }).addTickables(notes);
+    // Automatically generate beams
+    const beams = Beam.generateBeams(notes);
     // Render voices
     const formatter = new Formatter().joinVoices([voice]).format([voice], 400);
+    Formatter.FormatAndDraw(context, stave, notes)
     voice.draw(context, stave);
+    // Draw beams
+    beams.forEach(function(b) {b.setContext(context).draw()});
   }
 
   componentWillUpdate() {
