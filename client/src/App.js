@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import './skeleton.css';
 import Header from './components/Header.js';
 import Options from './components/Options.js';
 import MusicScore from './components/MusicScore.js';
@@ -72,22 +73,24 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <Header />
-        <button onClick={this.generateNewScore}>
-          Generate Music!
-        </button>
-        <MusicScore
-          clef={this.state.clef} 
-          nBeats={this.state.nBeats}
-          beatValue={this.state.beatValue}
-          nPitches={this.state.nPitches}
-          noteSequence={this.state.noteSequence}
-          rhythmSequence={this.state.rhythmSequence}
-        />
-        <Options  
-          pitchClasses={this.state.pitchClasses} 
-        />
+      <div className="App container">
+        <div className="row">
+          <Header />
+          <button onClick={this.generateNewScore}>
+            Generate Music!
+          </button>
+          <MusicScore
+            clef={this.state.clef} 
+            nBeats={this.state.nBeats}
+            beatValue={this.state.beatValue}
+            nPitches={this.state.nPitches}
+            noteSequence={this.state.noteSequence}
+            rhythmSequence={this.state.rhythmSequence}
+          />
+          <Options  
+            pitchClasses={this.state.pitchClasses} 
+          />
+        </div>
       </div>
     );
   }
