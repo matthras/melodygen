@@ -12,24 +12,7 @@ import { Beam } from 'vexflow/src/beam';
 class MusicScore extends Component {
   constructor(props) {
     super(props);
-
-    this.convertMusicNote = this.convertMusicNote.bind(this);
     this.generateMusicScore = this.generateMusicScore.bind(this);
-  }
-  // Possibly a redundant converter function and can be moved to parent component.
-  convertMusicNote(note) {
-    switch(note){
-      case 'C':
-        return "c/4";
-      case 'D':
-        return "d/4";
-      case 'E':
-        return "e/4";
-      case 'F':
-        return "f/4";
-      default: 
-        return "a/0";
-    }
   }
 
   generateMusicScore() {
@@ -50,7 +33,7 @@ class MusicScore extends Component {
     for(let n = 0; n < this.props.nPitches; n++){
       notes.push(new StaveNote({
         clef: this.props.clef,
-        keys: [this.convertMusicNote(noteSequence[n])],
+        keys: [noteSequence[n]],
         duration: rhythmSequence[n].toString()       
       }));
     }

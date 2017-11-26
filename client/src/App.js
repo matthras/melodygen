@@ -18,13 +18,13 @@ class App extends Component {
         [0.25, 0.25, 0.25, 0, 0.25, 0, 0, 0],
         [0.2, 0.2, 0.2, 0.2, 0, 0.2, 0, 0],
         [0.1, 0.2, 0.2, 0.2, 0.2, 0, 0.1, 0],
-        [0, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0],
-        [0, 0, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2],
-        [0, 0, 0, 0.2, 0.2, 0.2, 0.2, 0],
+        [0, 0, 0.2, 0.2, 0.2, 0.2, 0.2, 0],
+        [0, 0, 0.2, 0.2, 0.2, 0.2, 0.2, 0],
+        [0, 0, 0.2, 0.2, 0.2, 0.2, 0.2, 0],
         [0, 0, 0, 0, 0.2, 0.2, 0.3, 0.3],
         [0, 0, 0, 0, 0.2, 0.2, 0.3, 0.3],
       ],
-      noteSequence: ['C','D','E','F'],
+      noteSequence: ['c/4','d/4','e/4','f/4'],
       rhythmSequence: [4, 4, 4, 4],
       nBeats: 4,
       beatValue: 4
@@ -39,7 +39,7 @@ class App extends Component {
     // Random roll for anacrusis. Maybe aim for 0.25 chance for an anacrusis?
     // If there is to be an anacrusis, return the dominant; else return the tonic.
     // Need to verify music theory concerning other possible anacrusis notes.
-    return this.state.anacrusis ? 'G' : 'C'
+    return this.state.anacrusis ? 'g/4' : 'c/4'
   }
 
   getNextPitch(currentPitch) {
