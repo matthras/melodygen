@@ -26,6 +26,7 @@ class App extends Component {
       ],
       noteSequence: ['c/4','d/4','e/4','f/4'],
       rhythmSequence: [4, 4, 4, 4],
+      nBars: 2,
       nBeats: 4,
       beatValue: 4
     }
@@ -91,7 +92,8 @@ class App extends Component {
             Generate Music!
           </button>
           <MusicScore
-            clef={this.state.clef} 
+            clef={this.state.clef}
+            nBars={this.state.nBars} 
             nBeats={this.state.nBeats}
             beatValue={this.state.beatValue}
             nPitches={this.state.nPitches}
