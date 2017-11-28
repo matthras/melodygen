@@ -14,6 +14,7 @@ class MusicScore extends Component {
     super(props);
     this.generateMusicScore = this.generateMusicScore.bind(this);
     this.constructContext = this.constructContext.bind(this);
+    this.constructStaves = this.constructStaves.bind(this);
   }
 
   constructContext() {
@@ -22,14 +23,36 @@ class MusicScore extends Component {
     renderer.resize(800,500);
     return renderer.getContext();
   }
+  // Need to add key signature
+  constructStaves(nBars, clef, context) {
+    let horizontalPosition = 10;
+    let verticalPosition = 40;
+    let staves = [];
+    for(let bar = 0; bar < nBars; bar++){
+      let stave = new Stave(horizontalPosition, verticalPosition, 400);
+      // If the bar is even, then add the clef, since we're only having two bars per line.
+      if(bar % 2 === 0) {
+        stave.addClef(clef);
+        horizontalPosition = 410;
+      } else {
+        verticalPosition += 100;
+        horizontalPosition = 10;
+      }
+      // If it's the very first bar, then add the time signature.
+      if(bar === 0) {
+        const timeSignature = this.props.nBeats.toString() + "/" + this.props.beatValue.toString();
+        stave.addTimeSignature(timeSignature);
+      }
+      stave.setContext(context).draw();
+      staves.push(stave);
+    }
+    return staves;
+  }
 
   generateMusicScore() {    
     let context = this.constructContext();
     // Construct stave
-    let stave = new Stave(10, 40, 400);
-    const timeSignature = this.props.nBeats.toString() + "/" + this.props.beatValue.toString();
-    stave.addClef(this.props.clef).addTimeSignature(timeSignature);
-    stave.setContext(context).draw();
+    const staves = this.constructStaves(this.props.nBars, this.props.clef, context);
     // Construct notes array
     const noteSequence = this.props.noteSequence;
     const rhythmSequence = this.props.rhythmSequence;
