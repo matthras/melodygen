@@ -13,14 +13,18 @@ class MusicScore extends Component {
   constructor(props) {
     super(props);
     this.generateMusicScore = this.generateMusicScore.bind(this);
+    this.constructContext = this.constructContext.bind(this);
   }
 
-  generateMusicScore() {
-    // Construct context
+  constructContext() {
     const div = document.getElementById("musicScore");
     let renderer = new Renderer(div, 3);
-    renderer.resize(500,500);
-    let context = renderer.getContext();
+    renderer.resize(800,500);
+    return renderer.getContext();
+  }
+
+  generateMusicScore() {    
+    let context = this.constructContext();
     // Construct stave
     let stave = new Stave(10, 40, 400);
     const timeSignature = this.props.nBeats.toString() + "/" + this.props.beatValue.toString();
