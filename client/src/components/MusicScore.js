@@ -15,6 +15,7 @@ class MusicScore extends Component {
     this.generateMusicScore = this.generateMusicScore.bind(this);
     this.constructContext = this.constructContext.bind(this);
     this.constructStaves = this.constructStaves.bind(this);
+    this.constructNotes = this.constructNotes.bind(this);
   }
 
   constructContext() {
@@ -49,21 +50,24 @@ class MusicScore extends Component {
     return staves;
   }
 
-  generateMusicScore() {    
-    let context = this.constructContext();
-    // Construct stave
-    const staves = this.constructStaves(this.props.nBars, this.props.clef, context);
-    // Construct notes array
-    const noteSequence = this.props.noteSequence;
-    const rhythmSequence = this.props.rhythmSequence;
+  constructNotes(noteSequence, rhythmSequence, nPitches) {
     let notes = [];
-    for(let n = 0; n < this.props.nPitches; n++){
+    for(let n = 0; n < nPitches; n++){
       notes.push(new StaveNote({
         clef: this.props.clef,
         keys: [noteSequence[n]],
         duration: rhythmSequence[n].toString()       
       }));
     }
+    return notes;
+  }
+
+  generateMusicScore() {    
+    let context = this.constructContext();
+    // Construct stave
+    const staves = this.constructStaves(this.props.nBars, this.props.clef, context);
+    // Construct notes array
+    let notes = this.constructNotes(this.props.noteSequence, this.props.rhythmSequence, this.props.nPitches);
     // Create a voice in 4/4 and add notes
     const voice = new Voice({
       num_beats: this.props.nBeats, 
