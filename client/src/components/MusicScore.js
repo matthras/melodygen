@@ -88,31 +88,25 @@ class MusicScore extends Component {
   }
 
   generateMusicScore() {    
-    const nBars = this.props.nBars;
-    let context = this.constructContext(nBars);
-    // Construct stave
-    const staves = this.constructStaves(nBars, this.props.clef, context);
-    // Construct notes array
-    let notes = this.constructNotes(nBars, this.props.noteSequence, this.props.rhythmSequence);
-    console.log(notes);
-    // Create a voice in 4/4 and add notes
-    const voices = this.constructVoices(nBars, this.props.nBeats, this.props.beatValue, notes);
-    // Automatically generate beams
-    const beams = this.constructBeams(nBars, notes);
-    // Render voices
-    for(let bar = 0; bar < this.props.nBars; bar++) {
-      let formatter = new Formatter().joinVoices([voices[bar]]).format([voices[bar]], 400);
-      Formatter.FormatAndDraw(context, staves[bar], notes[bar])
-      voices[bar].draw(context, staves[bar]);
-      beams[bar].forEach(function(b) {b.setContext(context).draw()});
-    }
-  }
-
-  componentWillUpdate() {
-    // Before re-rendering a new score, remove all instances of old score by removing all child nodes. 
-    const musicScoreDiv = document.getElementById("musicScore");
-    while(musicScoreDiv.firstChild) {
-      musicScoreDiv.removeChild(musicScoreDiv.firstChild);
+    if(this.props.renderNewScore) {
+      const nBars = this.props.nBars;
+      let context = this.constructContext(nBars);
+      // Construct stave
+      const staves = this.constructStaves(nBars, this.props.clef, context);
+      // Construct notes array
+      let notes = this.constructNotes(nBars, this.props.noteSequence, this.props.rhythmSequence);
+      // Create a voice in 4/4 and add notes
+      const voices = this.constructVoices(nBars, this.props.nBeats, this.props.beatValue, notes);
+      // Automatically generate beams
+      const beams = this.constructBeams(nBars, notes);
+      // Render voices
+      for(let bar = 0; bar < this.props.nBars; bar++) {
+        let formatter = new Formatter().joinVoices([voices[bar]]).format([voices[bar]], 400);
+        Formatter.FormatAndDraw(context, staves[bar], notes[bar])
+        voices[bar].draw(context, staves[bar]);
+        beams[bar].forEach(function(b) {b.setContext(context).draw()});
+      }
+      this.props.preventRendering();
     }
   }
 

@@ -6,13 +6,22 @@ import React, { Component } from 'react';
 // pitchClasses = the notes/pitch classes considered (array of strings)
 
 class Options extends Component {
-    render() {
-        return(
-            <div>
-                Number of Bars: <input type="number" value={this.props.nBars}></input>
-            </div>
-        )
-    }
+  constructor(props){
+    super(props);
+    this.handlenBarsChange = this.handlenBarsChange.bind(this);
+  }
+
+  handlenBarsChange(e){
+    this.props.onnBarsChange(e.target.value);
+  }
+
+  render() {
+      return(
+          <div>
+              Number of Bars: <input type="number" value={this.props.nBars} onChange={this.handlenBarsChange} />
+          </div>
+      )
+  }
         
 }
 

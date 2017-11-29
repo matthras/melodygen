@@ -28,12 +28,23 @@ class App extends Component {
       rhythmSequence: [[4, 4, 4, 4],[4,4,4,4],[4,4,4,4],[4,4,4,4]],
       nBars: 4,
       nBeats: 4,
-      beatValue: 4
+      beatValue: 4,
+      renderNewScore: true
     }
     this.generateRhythmSequence = this.generateRhythmSequence.bind(this);
     this.generateNewScore = this.generateNewScore.bind(this);
     this.getNextPitch = this.getNextPitch.bind(this);
     this.startingPitch = this.startingPitch.bind(this);
+    this.preventRendering = this.preventRendering.bind(this);
+    // Change handlers for <Options>
+    this.handlenBarsChange = this.handlenBarsChange.bind(this);
+  }
+  preventRendering() {
+    this.setState({renderNewScore: false})
+  }
+
+  handlenBarsChange(num) {
+    this.setState({nBars: num});
   }
 
   startingPitch() {
@@ -71,6 +82,11 @@ class App extends Component {
   }
 
   generateNewScore() {
+    // Before re-rendering a new score, remove all instances of old score by removing all child nodes. 
+    const musicScoreDiv = document.getElementById("musicScore");
+    while(musicScoreDiv.firstChild) {
+      musicScoreDiv.removeChild(musicScoreDiv.firstChild);
+    }
     let newRhythmSequence = this.generateRhythmSequence();
     let newNoteSequence = [];
     let currentPitch = 0; // Dependent on result of startingPitch() which is currently the tonic.
@@ -87,7 +103,8 @@ class App extends Component {
     }
     this.setState({
       noteSequence: newNoteSequence, 
-      rhythmSequence: newRhythmSequence
+      rhythmSequence: newRhythmSequence,
+      renderNewScore: true
     });
   }
 
@@ -106,6 +123,8 @@ class App extends Component {
             beatValue={this.state.beatValue}
             noteSequence={this.state.noteSequence}
             rhythmSequence={this.state.rhythmSequence}
+            renderNewScore={this.state.renderNewScore}
+            preventRendering={this.preventRendering}
           />
           <Options  
             pitchClasses={this.state.pitchClasses} 
@@ -114,6 +133,7 @@ class App extends Component {
             markovChain={this.state.markovChain}
             nBeats={this.state.nBeats}
             beatValue={this.state.beatValue}
+            onnBarsChange={this.handlenBarsChange}
           />
         </div>
       </div>
