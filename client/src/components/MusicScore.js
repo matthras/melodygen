@@ -19,10 +19,10 @@ class MusicScore extends Component {
     this.constructVoices = this.constructVoices.bind(this);
   }
 
-  constructContext() {
+  constructContext(nBars) {
     const div = document.getElementById("musicScore");
     let renderer = new Renderer(div, 3);
-    renderer.resize(820,500);
+    renderer.resize(820,125*(Math.ceil(nBars/2)));
     return renderer.getContext();
   }
   // Need to add key signature
@@ -89,7 +89,7 @@ class MusicScore extends Component {
 
   generateMusicScore() {    
     const nBars = this.props.nBars;
-    let context = this.constructContext();
+    let context = this.constructContext(nBars);
     // Construct stave
     const staves = this.constructStaves(nBars, this.props.clef, context);
     // Construct notes array
