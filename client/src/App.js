@@ -26,7 +26,7 @@ class App extends Component {
       ],
       noteSequence: ['c/4','d/4','e/4','f/4'],
       rhythmSequence: [4, 4, 4, 4],
-      nBars: 2,
+      nBars: 4,
       nBeats: 4,
       beatValue: 4
     }
@@ -60,8 +60,12 @@ class App extends Component {
   // Generates a new rhythm - at the moment it's designed to have one element per beat, so combinations such as quaver-quaver, or 4 semiquavers, are all contained within subarrays. The returned array is flattened out in generateNewScore()
   generateRhythmSequence() {
     let newRhythmSequence = [];
-    for(let b = 0; b < this.state.nBeats; b++){
-      newRhythmSequence.push( Math.random()> 0.25 ? 4 : [8, 8])
+    for(let bar = 0; bar < this.state.nBars; bar++){
+      let rhythmBar = [];
+      for(let b = 0; b < this.state.nBeats; b++){
+        rhythmBar.push( Math.random()> 0.25 ? 4 : [8, 8])
+      }
+      newRhythmSequence.push(rhythmBar);
     }
     return newRhythmSequence;
   }
