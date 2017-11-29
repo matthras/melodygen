@@ -65,14 +65,13 @@ class App extends Component {
       for(let b = 0; b < this.state.nBeats; b++){
         rhythmBar.push( Math.random()> 0.25 ? 4 : [8, 8])
       }
-      newRhythmSequence.push(rhythmBar);
+      newRhythmSequence.push([].concat(...rhythmBar));
     }
     return newRhythmSequence;
   }
 
   generateNewScore() {
-    // Flattens array from generateRhythmSequence()
-    const newRhythmSequence = [].concat(...this.generateRhythmSequence());
+    let newRhythmSequence = this.generateRhythmSequence();
     let newNoteSequence = [];
     newNoteSequence.push(this.startingPitch());
     let currentPitch = 0; // Dependent on result of startingPitch() which is currently the tonic.
