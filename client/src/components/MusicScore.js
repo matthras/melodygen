@@ -16,6 +16,7 @@ class MusicScore extends Component {
     this.constructContext = this.constructContext.bind(this);
     this.constructStaves = this.constructStaves.bind(this);
     this.constructNotes = this.constructNotes.bind(this);
+    this.constructVoices = this.constructVoices.bind(this);
   }
 
   constructContext() {
@@ -66,6 +67,18 @@ class MusicScore extends Component {
     return notes;
   }
 
+  constructVoices(nBars, nBeats, beatValue, notes) {
+    let voices = [];
+    for(let bar = 0; bar < nBars; bar++) {
+      const voice = new Voice({
+        num_beats: nBeats,
+        beat_value: beatValue
+      }).addTickables(notes[bar]);
+      voices.push(voice);
+    }
+    return voices;
+  }
+
   generateMusicScore() {    
     let context = this.constructContext();
     // Construct stave
@@ -73,10 +86,7 @@ class MusicScore extends Component {
     // Construct notes array
     let notes = this.constructNotes(this.props.nBars, this.props.noteSequence, this.props.rhythmSequence);
     // Create a voice in 4/4 and add notes
-    const voice = new Voice({
-      num_beats: this.props.nBeats, 
-      beat_value:this.props.beatValue
-    }).addTickables([].concat(...notes));
+    const voices = this.constructVoices(this.props.nBars, this.props.nBeats, this.props.beatValue, notes);
     // Automatically generate beams
     const beams = Beam.generateBeams(notes);
     // Render voices
