@@ -73,16 +73,21 @@ class App extends Component {
   generateNewScore() {
     let newRhythmSequence = this.generateRhythmSequence();
     let newNoteSequence = [];
-    newNoteSequence.push(this.startingPitch());
     let currentPitch = 0; // Dependent on result of startingPitch() which is currently the tonic.
-    for(let n = 1; n < newRhythmSequence.length; n++){
-      currentPitch = this.getNextPitch(currentPitch);
-      newNoteSequence.push(this.state.pitchClasses[currentPitch]);
+    for(let bar = 0; bar < this.state.nBars; bar++) {
+      let notesBar = [];
+      for(let r = 0; r < newRhythmSequence[bar].length; r++) {
+        if(bar===0){
+          notesBar.push(this.startingPitch());
+        }
+        currentPitch = this.getNextPitch(currentPitch);
+        notesBar.push(this.state.pitchClasses[currentPitch]);
+      }
+      newNoteSequence.push(notesBar);
     }
     this.setState({
       noteSequence: newNoteSequence, 
-      rhythmSequence: newRhythmSequence, 
-      nPitches: newRhythmSequence.length
+      rhythmSequence: newRhythmSequence
     });
   }
 
