@@ -24,9 +24,9 @@ class App extends Component {
         [0, 0, 0, 0, 0.2, 0.2, 0.3, 0.3],
         [0, 0, 0, 0, 0.2, 0.2, 0.3, 0.3],
       ],
-      noteSequence: ['c/4','d/4','e/4','f/4'],
-      rhythmSequence: [4, 4, 4, 4],
-      nBars: 4,
+      noteSequence: [['c/4','d/4','e/4','f/4'],['g/4', 'a/4', 'b/4', 'c/5']],
+      rhythmSequence: [[4, 4, 4, 4],[4,4,4,4]],
+      nBars: 2,
       nBeats: 4,
       beatValue: 4
     }
@@ -104,7 +104,6 @@ class App extends Component {
             nBars={this.state.nBars} 
             nBeats={this.state.nBeats}
             beatValue={this.state.beatValue}
-            nPitches={this.state.nPitches}
             noteSequence={this.state.noteSequence}
             rhythmSequence={this.state.rhythmSequence}
           />
