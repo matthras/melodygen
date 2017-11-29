@@ -50,14 +50,18 @@ class MusicScore extends Component {
     return staves;
   }
 
-  constructNotes(noteSequence, rhythmSequence, nPitches) {
+  constructNotes(nBars, noteSequence, rhythmSequence) {
     let notes = [];
-    for(let n = 0; n < nPitches; n++){
-      notes.push(new StaveNote({
-        clef: this.props.clef,
-        keys: [noteSequence[n]],
-        duration: rhythmSequence[n].toString()       
-      }));
+    for(let bar = 0; bar < nBars; bar++){
+      let barNotes = [];
+      for(let n = 0; n < rhythmSequence[bar].length; n++){
+        notes.push(new StaveNote({
+          clef: this.props.clef,
+          keys: [noteSequence[bar][n]],
+          duration: rhythmSequence[bar][n].toString()       
+        }));
+      }
+      notes.push(barNotes);
     }
     return notes;
   }
@@ -67,18 +71,20 @@ class MusicScore extends Component {
     // Construct stave
     const staves = this.constructStaves(this.props.nBars, this.props.clef, context);
     // Construct notes array
-    let notes = this.constructNotes(this.props.noteSequence, this.props.rhythmSequence, this.props.nPitches);
+    let notes = this.constructNotes(this.props.nBars, this.props.noteSequence, this.props.rhythmSequence);
     // Create a voice in 4/4 and add notes
     const voice = new Voice({
       num_beats: this.props.nBeats, 
       beat_value:this.props.beatValue
-    }).addTickables(notes);
+    }).addTickables([].concat(...notes));
     // Automatically generate beams
     const beams = Beam.generateBeams(notes);
     // Render voices
     const formatter = new Formatter().joinVoices([voice]).format([voice], 400);
-    Formatter.FormatAndDraw(context, stave, notes)
-    voice.draw(context, stave);
+    for(let bar = 0; bar < this.props.nBars; bar++) {
+      Formatter.FormatAndDraw(context, staves[bar], notes)
+      voice.draw(context, staves[bar]);
+    }
     // Draw beams
     beams.forEach(function(b) {b.setContext(context).draw()});
   }
