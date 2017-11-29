@@ -56,7 +56,7 @@ class MusicScore extends Component {
     for(let bar = 0; bar < nBars; bar++){
       let barNotes = [];
       for(let n = 0; n < rhythmSequence[bar].length; n++){
-        notes.push(new StaveNote({
+        barNotes.push(new StaveNote({
           clef: this.props.clef,
           keys: [noteSequence[bar][n]],
           duration: rhythmSequence[bar][n].toString()       
@@ -79,24 +79,33 @@ class MusicScore extends Component {
     return voices;
   }
 
+  constructBeams(nBars, notes){
+    let beams = [];
+    for(let bar = 0; bar < nBars; bar++) {
+      beams.push(Beam.generateBeams(notes[bar]));
+    }
+    return beams;   
+  }
+
   generateMusicScore() {    
+    const nBars = this.props.nBars;
     let context = this.constructContext();
     // Construct stave
-    const staves = this.constructStaves(this.props.nBars, this.props.clef, context);
+    const staves = this.constructStaves(nBars, this.props.clef, context);
     // Construct notes array
-    let notes = this.constructNotes(this.props.nBars, this.props.noteSequence, this.props.rhythmSequence);
+    let notes = this.constructNotes(nBars, this.props.noteSequence, this.props.rhythmSequence);
+    console.log(notes);
     // Create a voice in 4/4 and add notes
-    const voices = this.constructVoices(this.props.nBars, this.props.nBeats, this.props.beatValue, notes);
+    const voices = this.constructVoices(nBars, this.props.nBeats, this.props.beatValue, notes);
     // Automatically generate beams
-    const beams = Beam.generateBeams(notes);
+    const beams = this.constructBeams(nBars, notes);
     // Render voices
-    const formatter = new Formatter().joinVoices([voice]).format([voice], 400);
     for(let bar = 0; bar < this.props.nBars; bar++) {
-      Formatter.FormatAndDraw(context, staves[bar], notes)
-      voice.draw(context, staves[bar]);
+      let formatter = new Formatter().joinVoices([voices[bar]]).format([voices[bar]], 400);
+      Formatter.FormatAndDraw(context, staves[bar], notes[bar])
+      voices[bar].draw(context, staves[bar]);
+      beams[bar].forEach(function(b) {b.setContext(context).draw()});
     }
-    // Draw beams
-    beams.forEach(function(b) {b.setContext(context).draw()});
   }
 
   componentWillUpdate() {
