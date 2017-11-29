@@ -22,13 +22,13 @@ class MusicScore extends Component {
   constructContext() {
     const div = document.getElementById("musicScore");
     let renderer = new Renderer(div, 3);
-    renderer.resize(800,500);
+    renderer.resize(820,500);
     return renderer.getContext();
   }
   // Need to add key signature
   constructStaves(nBars, clef, context) {
     let horizontalPosition = 10;
-    let verticalPosition = 40;
+    let verticalPosition = 20;
     let staves = [];
     for(let bar = 0; bar < nBars; bar++){
       let stave = new Stave(horizontalPosition, verticalPosition, 400);
