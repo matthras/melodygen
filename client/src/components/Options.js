@@ -9,7 +9,7 @@ class Options extends Component {
     render() {
         return(
             <div>
-                The number of pitch classes are {this.props.nPitchClasses} with pitches {this.props.pitchClasses}
+                Number of Bars: <input type="number" value={this.props.nBars}></input>
             </div>
         )
     }
