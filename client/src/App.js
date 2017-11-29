@@ -109,6 +109,11 @@ class App extends Component {
           />
           <Options  
             pitchClasses={this.state.pitchClasses} 
+            clef={this.state.clef}
+            nBars={this.state.nBars}
+            markovChain={this.state.markovChain}
+            nBeats={this.state.nBeats}
+            beatValue={this.state.beatValue}
           />
         </div>
       </div>
