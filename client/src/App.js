@@ -76,7 +76,7 @@ class App extends Component {
     return "Error" // How to do error handling here?
   }
 
-  // Generates a new rhythm - at the moment it's designed to have one element per beat, so combinations such as quaver-quaver, or 4 semiquavers, are all contained within subarrays. The returned array is flattened out in generateNewScore()
+  // Generates a new rhythm - at the moment it's designed to have one element per beat, so combinations such as quaver-quaver, or 4 semiquavers, are all contained within subarrays. One flattened array per bar.
   generateRhythmSequence() {
     let newRhythmSequence = [];
     for(let bar = 0; bar < this.state.nBars; bar++){
@@ -95,6 +95,7 @@ class App extends Component {
     while(musicScoreDiv.firstChild) {
       musicScoreDiv.removeChild(musicScoreDiv.firstChild);
     }
+    // Generating New Score
     let newRhythmSequence = this.generateRhythmSequence();
     let newNoteSequence = [];
     let currentPitch = 0; // Dependent on result of startingPitch() which is currently the tonic.

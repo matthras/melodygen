@@ -1,10 +1,6 @@
 // Component holding all the options that users can tweak to modify the settings for the score.
 import React, { Component } from 'react';
 
-// Props received:
-// nPitchClasses = # of Pitch Classes (integer)
-// pitchClasses = the notes/pitch classes considered (array of strings)
-
 class Options extends Component {
   constructor(props){
     super(props);
@@ -36,7 +32,7 @@ class Options extends Component {
               </select>
           </div>
       )
-  } // beatValue options to be added later
+  } // beatValue additional options e.g. 2, 8, 16, etc. to be added later
         
 }
 
