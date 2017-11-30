@@ -38,6 +38,8 @@ class App extends Component {
     this.preventRendering = this.preventRendering.bind(this);
     // Change handlers for <Options>
     this.handlenBarsChange = this.handlenBarsChange.bind(this);
+    this.handlenBeatsChange = this.handlenBeatsChange.bind(this);
+    this.handlebeatValueChange = this.handlebeatValueChange.bind(this);
   }
   preventRendering() {
     this.setState({renderNewScore: false})
@@ -45,6 +47,12 @@ class App extends Component {
 
   handlenBarsChange(num) {
     this.setState({nBars: num});
+  }
+  handlenBeatsChange(num) {
+    this.setState({nBeats: num});
+  }
+  handlebeatValueChange(num) {
+    this.setState({beatValue: num});
   }
 
   startingPitch() {
@@ -134,6 +142,8 @@ class App extends Component {
             nBeats={this.state.nBeats}
             beatValue={this.state.beatValue}
             onnBarsChange={this.handlenBarsChange}
+            onnBeatsChange={this.handlenBeatsChange}
+            onbeatValueChange={this.handlebeatValueChange}
           />
         </div>
       </div>
