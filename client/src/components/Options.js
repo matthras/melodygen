@@ -1,27 +1,6 @@
 // Component holding all the options that users can tweak to modify the settings for the score.
 import React, { Component } from 'react';
-
-function MarkovChainRow(props) {
-  const columns = props.matrixRow.map( (cell) =>
-    <td>{cell}</td>
-  );
-  return (
-    <tr>{columns}</tr>
-  );
-}
-
-function MarkovChain(props) {
-  const matrixRows = props.matrix.map( (row) =>
-    <MarkovChainRow matrixRow={row} />
-  )
-  return (
-    <table>
-      <tbody>
-      {matrixRows}
-      </tbody>
-    </table>
-  )  
-}
+import { MarkovChain } from './MarkovChain.js'
 
 class Options extends Component {
   constructor(props){
