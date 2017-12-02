@@ -31,7 +31,7 @@ class Options extends Component {
           Beat Value: <select value={this.props.beatValue} onChange={this.handlebeatValueChange}>
             <option value="4">4</option>
           </select> <br />
-          <MarkovChain matrix={this.props.markovChain} />
+          <MarkovChain matrix={this.props.markovChain} pitchClasses={this.props.pitchClasses} />
       </div>
     )
   } // beatValue additional options e.g. 2, 8, 16, etc. to be added later
