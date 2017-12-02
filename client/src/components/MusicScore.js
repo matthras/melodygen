@@ -122,7 +122,7 @@ class MusicScore extends Component {
 
   render() {
     return(
-      <div id="musicScore">
+      <div id="musicScore" className="row">
       </div>
     )
   }

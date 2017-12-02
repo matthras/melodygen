@@ -120,7 +120,6 @@ class App extends Component {
   render() {
     return (
       <div className="App container">
-        <div className="row">
           <Header />
           <button onClick={this.generateNewScore}>
             Generate Music!
@@ -146,7 +145,6 @@ class App extends Component {
             onnBeatsChange={this.handlenBeatsChange}
             onbeatValueChange={this.handlebeatValueChange}
           />
-        </div>
       </div>
     );
   }

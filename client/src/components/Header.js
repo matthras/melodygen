@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class Header extends Component {
   render() {
     return(
-      <div id="header">
+      <div id="header" className="row">
         <h1>MelodyGen</h1>
         <div id="menu">
           <a className="button primary" href="https://matthras.com/blog/post/melodygen-intro" target="_blank" rel="noopener noreferrer">About</a>

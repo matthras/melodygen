@@ -24,15 +24,19 @@ class Options extends Component {
 
   render() {
     return(
-      <div>
+      <div className="row">
+        <div className="five columns">
           Number of Bars: <input type="number" value={this.props.nBars} onChange={this.handlenBarsChange} /> <br />
           Time Signature: <br />
           Number of Beats: <input type="number" value={this.props.nBeats} onChange={this.handlenBeatsChange} /> <br />
           Beat Value: <select value={this.props.beatValue} onChange={this.handlebeatValueChange}>
             <option value="4">4</option>
-          </select> <br />
+          </select>
+        </div>
+        <div className="seven columns">
           Markov Chain: <br />
           <MarkovChain matrix={this.props.markovChain} pitchClasses={this.props.pitchClasses} />
+        </div>
       </div>
     )
   } // beatValue additional options e.g. 2, 8, 16, etc. to be added later
