@@ -1,6 +1,7 @@
 import React from 'react';
 
 function MarkovChainRow(props) {
+  // Key indexes of each cell are set up so that when any value of the Markov Chain is changed, the key references the correct entry and no further number wrangling is needed. 
   const columns = props.matrixRow.map( (cell, index) =>
     <td key={props.rowIndex+","+(index-1)}>{cell}</td>
   );
