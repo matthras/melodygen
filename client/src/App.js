@@ -40,6 +40,7 @@ class App extends Component {
     this.handlenBarsChange = this.handlenBarsChange.bind(this);
     this.handlenBeatsChange = this.handlenBeatsChange.bind(this);
     this.handlebeatValueChange = this.handlebeatValueChange.bind(this);
+    this.handleMCchange = this.handleMCchange.bind(this);
   }
   preventRendering() {
     this.setState({renderNewScore: false})
@@ -53,6 +54,11 @@ class App extends Component {
   }
   handlebeatValueChange(num) {
     this.setState({beatValue: num});
+  }
+  handleMCchange(row, rowIndex) {
+    let newMarkovChain = this.state.markovChain;
+    newMarkovChain[rowIndex] = row;
+    this.setState({markovChain: newMarkovChain})
   }
 
   startingPitch() {
@@ -144,6 +150,7 @@ class App extends Component {
             onnBarsChange={this.handlenBarsChange}
             onnBeatsChange={this.handlenBeatsChange}
             onbeatValueChange={this.handlebeatValueChange}
+            onMCchange={this.handleMCchange}
           />
       </div>
     );

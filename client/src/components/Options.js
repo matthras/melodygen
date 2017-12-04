@@ -51,7 +51,10 @@ class Options extends Component {
             <li>Each row must add up to 1.</li>
           </ul>
           In future there will be checks in place to ensure any edited Markov Chain adheres to the above rules.
-          <MarkovChain matrix={this.props.markovChain} pitchClasses={this.props.pitchClasses} />
+          <MarkovChain 
+            matrix={this.props.markovChain} 
+            pitchClasses={this.props.pitchClasses} 
+            onMCchange={this.props.onMCchange} />
         </div>
       </div>
       </div>
