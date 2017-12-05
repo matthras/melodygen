@@ -123,6 +123,23 @@ class App extends Component {
     });
   }
 
+  componentWillMount() {
+    // Generate full pitch range A0 to C8 (88 key piano)
+    // A0 to C8, number starts on C e.g. A0, A#0, B0, C1, etc.
+    let fullPitchRange = [];
+    const pitchClasses = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#','b'];
+    fullPitchRange.push('a/0');
+    fullPitchRange.push('a#/0');
+    fullPitchRange.push('b/0');
+    for(let p = 1; p < 8; p++){
+      for(let pc = 0; pc < pitchClasses.length; pc++){
+        fullPitchRange.push(pitchClasses[pc]+'/'+p);
+      }
+    }
+    fullPitchRange.push('c/8');
+    this.setState({fullPitchRange})
+  }
+
   render() {
     return (
       <div className="App container">
