@@ -3,13 +3,13 @@ import React, { Component } from 'react';
 class MarkovChainRow extends Component {
   constructor(props) {
     super(props);
-    this.MCchange = this.MCchange.bind(this);
+    this.markovchainChange = this.markovchainChange.bind(this);
   }
-  MCchange(e) {
+  markovchainChange(e) {
     const coordinates = e.target.getAttribute('data-markovchainref').split('');
     let newRow = this.props.matrixRow.slice(1);
     newRow[coordinates[1]] = parseFloat(e.target.value);
-    this.props.MCchange(newRow, coordinates[0]);
+    this.props.markovchainChange(newRow, coordinates[0]);
   } 
   render() {
     // Key indexes of each cell are set up so that when any value of the Markov Chain is changed, the key references the correct entry and no further number wrangling is needed. 
@@ -25,7 +25,7 @@ class MarkovChainRow extends Component {
             max="1" 
             step="0.01" 
             value={cell} 
-            onChange={this.MCchange} >
+            onChange={this.markovchainChange} >
           </input>
         </td>
     );    
@@ -52,7 +52,7 @@ export class MarkovChain extends Component {
         key={"markovchainRow"+index} 
         matrixRow={row} 
         rowIndex={index}
-        MCchange={this.props.MCchange}
+        markovchainChange={this.props.markovchainChange}
       />
     );
     return (

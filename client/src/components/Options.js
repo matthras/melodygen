@@ -54,7 +54,7 @@ class Options extends Component {
           <MarkovChain 
             matrix={this.props.markovChain} 
             pitchClasses={this.props.pitchClasses} 
-            MCchange={this.props.MCchange} />
+            markovchainChange={this.props.markovchainChange} />
         </div>
       </div>
       </div>
