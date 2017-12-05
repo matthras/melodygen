@@ -37,25 +37,25 @@ class App extends Component {
     this.startingPitch = this.startingPitch.bind(this);
     this.preventRendering = this.preventRendering.bind(this);
     // Change handlers for <Options>
-    this.handlenBarsChange = this.handlenBarsChange.bind(this);
-    this.handlenBeatsChange = this.handlenBeatsChange.bind(this);
-    this.handlebeatValueChange = this.handlebeatValueChange.bind(this);
-    this.handleMCchange = this.handleMCchange.bind(this);
+    this.nBarsChange = this.nBarsChange.bind(this);
+    this.nBeatsChange = this.nBeatsChange.bind(this);
+    this.beatValueChange = this.beatValueChange.bind(this);
+    this.MCchange = this.MCchange.bind(this);
   }
   preventRendering() {
     this.setState({renderNewScore: false})
   }
 
-  handlenBarsChange(num) {
+  nBarsChange(num) {
     this.setState({nBars: num});
   }
-  handlenBeatsChange(num) {
+  nBeatsChange(num) {
     this.setState({nBeats: num});
   }
-  handlebeatValueChange(num) {
+  beatValueChange(num) {
     this.setState({beatValue: num});
   }
-  handleMCchange(row, rowIndex) {
+  MCchange(row, rowIndex) {
     let newMarkovChain = this.state.markovChain;
     newMarkovChain[rowIndex] = row;
     this.setState({markovChain: newMarkovChain})
@@ -147,10 +147,10 @@ class App extends Component {
             markovChain={this.state.markovChain}
             nBeats={this.state.nBeats}
             beatValue={this.state.beatValue}
-            onnBarsChange={this.handlenBarsChange}
-            onnBeatsChange={this.handlenBeatsChange}
-            onbeatValueChange={this.handlebeatValueChange}
-            onMCchange={this.handleMCchange}
+            nBarsChange={this.nBarsChange}
+            nBeatsChange={this.nBeatsChange}
+            beatValueChange={this.beatValueChange}
+            MCchange={this.MCchange}
           />
       </div>
     );

@@ -5,21 +5,21 @@ import { MarkovChain } from './MarkovChain.js'
 class Options extends Component {
   constructor(props){
     super(props);
-    this.handlenBarsChange = this.handlenBarsChange.bind(this);
-    this.handlenBeatsChange = this.handlenBeatsChange.bind(this);
-    this.handlebeatValueChange = this.handlebeatValueChange.bind(this);
+    this.nBarsChange = this.nBarsChange.bind(this);
+    this.nBeatsChange = this.nBeatsChange.bind(this);
+    this.beatValueChange = this.beatValueChange.bind(this);
   }
 
-  handlenBarsChange(e){
-    this.props.onnBarsChange(e.target.value);
+  nBarsChange(e){
+    this.props.nBarsChange(e.target.value);
   }
 
-  handlenBeatsChange(e) {
-    this.props.onnBeatsChange(e.target.value);
+  nBeatsChange(e) {
+    this.props.nBeatsChange(e.target.value);
   }
 
-  handlebeatValueChange(e) {
-    this.props.onbeatValueChange(e.target.value);
+  beatValueChange(e) {
+    this.props.beatValueChange(e.target.value);
   }
 
   render() {
@@ -27,18 +27,18 @@ class Options extends Component {
       <div id="Options">
       <div className="row">
         <div className="four columns">
-          <b>Number of Bars</b> <br /> <input type="number" value={this.props.nBars} onChange={this.handlenBarsChange} /> <br />
+          <b>Number of Bars</b> <br /> <input type="number" value={this.props.nBars} onChange={this.nBarsChange} /> <br />
         </div>
         <div className="four columns">
           <b>Time Signature</b> <br />
-          Number of Beats: <input type="number" value={this.props.nBeats} onChange={this.handlenBeatsChange} /> <br />
-          Beat Value: <select value={this.props.beatValue} onChange={this.handlebeatValueChange}>
+          Number of Beats: <input type="number" value={this.props.nBeats} onChange={this.nBeatsChange} /> <br />
+          Beat Value: <select value={this.props.beatValue} onChange={this.beatValueChange}>
             <option value="4">4</option>
           </select>
         </div>
         <div className="four columns">
           <b>Key Signature</b> <br />
-          <select value={this.props.keySignature} onChange={this.handlekeySignatureChange}>
+          <select value={this.props.keySignature} onChange={this.keySignatureChange}>
             <option value="Cmaj">C Major</option>
           </select>
         </div>
@@ -54,7 +54,7 @@ class Options extends Component {
           <MarkovChain 
             matrix={this.props.markovChain} 
             pitchClasses={this.props.pitchClasses} 
-            onMCchange={this.props.onMCchange} />
+            MCchange={this.props.MCchange} />
         </div>
       </div>
       </div>
