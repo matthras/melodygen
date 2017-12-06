@@ -40,12 +40,12 @@ export class MarkovChain extends Component {
     super()
   }
   render() {
-    const topLabels = this.props.pitchClasses.map( (label, index) => 
+    const topLabels = this.props.workingPitchRange.map( (label, index) => 
     <td key={"topLabel"+index}>{label}</td> 
     );
     // Concatenates the pitch class labels to the left of the Markov chain so that they're included in the table.
     const includeLeftLabels = this.props.matrix.map( 
-      (row,index) => [this.props.pitchClasses[index]].concat(row)
+      (row,index) => [this.props.workingPitchRange[index]].concat(row)
     )
     const matrixRows = includeLeftLabels.map( (row,index) =>
       <MarkovChainRow 

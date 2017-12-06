@@ -53,7 +53,7 @@ class Options extends Component {
           In future there will be checks in place to ensure any edited Markov Chain adheres to the above rules.
           <MarkovChain 
             matrix={this.props.markovChain} 
-            pitchClasses={this.props.pitchClasses} 
+            workingPitchRange={this.props.workingPitchRange} 
             markovchainChange={this.props.markovchainChange} />
         </div>
       </div>
