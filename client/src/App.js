@@ -18,7 +18,7 @@ class App extends Component {
       majorScaleIntervals: [2, 2, 1, 2, 2, 2, 1],
       minorScaleIntervals: [2, 1, 2, 2, 1, 2, 1],
       pitchClasses: ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#','b'],
-      fullpitchRange: [], // Generated in componentwillmount()
+      fullPitchRange: [], // Generated in componentwillmount()
       noteLengthClasses: [1, 2, 4, 8, 16], // Whole note, minim, crotchet, quaver, semiquaver.
       // Initial Conditions
       workingPitchRange: ['c/4','d/4','e/4', 'f/4', 'g/4', 'a/4', 'b/4', 'c/5'],
@@ -44,6 +44,7 @@ class App extends Component {
     this.getNextPitch = this.getNextPitch.bind(this);
     this.startingPitch = this.startingPitch.bind(this);
     this.preventRendering = this.preventRendering.bind(this);
+    this.generatePitchRange = this.generatePitchRange.bind(this);
     // Change handlers for <Options>
     this.nBarsChange = this.nBarsChange.bind(this);
     this.nBeatsChange = this.nBeatsChange.bind(this);
@@ -131,20 +132,32 @@ class App extends Component {
     });
   }
 
-  componentWillMount() {
-    // Generate full pitch range A0 to C8 (88 key piano)
-    // A0 to C8, number starts on C e.g. A0, A#0, B0, C1, etc.
-    let fullPitchRange = [];
-    fullPitchRange.push('a/0');
-    fullPitchRange.push('a#/0');
-    fullPitchRange.push('b/0');
-    for(let p = 1; p < 8; p++){
-      for(let pc = 0; pc < this.state.pitchClasses.length; pc++){
-        fullPitchRange.push(this.state.pitchClasses[pc]+'/'+p);
+  generatePitchRange(bottomPitch = 'a/0', topPitch = 'c/8') {
+    // Test: bottomPitch and topPitch MUST be in 'letter'/'number' form
+    if(this.state.fullPitchRange.length===0){
+      // Generate full pitch range A0 to C8 (88 key piano)
+      // A0 to C8, number starts on C e.g. A0, A#0, B0, C1, etc.
+      // This should only happen at the start in componentWillMount()
+      let fullPitchRange = [];
+      fullPitchRange.push('a/0');
+      fullPitchRange.push('a#/0');
+      fullPitchRange.push('b/0');
+      for(let p = 1; p < 8; p++){
+        for(let pc = 0; pc < this.state.pitchClasses.length; pc++){
+          fullPitchRange.push(this.state.pitchClasses[pc]+'/'+p);
+        }
       }
+      fullPitchRange.push('c/8');
+      this.setState({fullPitchRange})
+    } else {
+      const fullPitchRange = this.state.fullPitchRange;
+      const workingPitchRange = fullPitchRange.slice(fullPitchRange.indexOf(bottomPitch), fullPitchRange.indexOf(topPitch)+1)
+      this.setState({workingPitchRange})
     }
-    fullPitchRange.push('c/8');
-    this.setState({fullPitchRange})
+  }
+
+  componentWillMount() {
+    this.generatePitchRange()
   }
 
   render() {
