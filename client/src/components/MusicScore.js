@@ -1,13 +1,13 @@
 // Component to display the music score.
 // Role: ONLY to render the music score based on props passed down from App. It doesn't do any calculations whatsoever.
 import React, { Component } from 'react';
-import { Accidental } from 'vexflow/src/accidental';
-import { Stave } from 'vexflow/src/stave';
-import { StaveNote } from 'vexflow/src/stavenote';
-import { Voice } from 'vexflow/src/voice';
-import { Formatter } from 'vexflow/src/formatter';
-import { Renderer } from 'vexflow/src/renderer';
-import { Beam } from 'vexflow/src/beam';
+import { Accidental } from '../vexflow/accidental';
+import { Stave } from '../vexflow/stave';
+import { StaveNote } from '../vexflow/stavenote';
+import { Voice } from '../vexflow/voice';
+import { Formatter } from '../vexflow/formatter';
+import { Renderer } from '../vexflow/renderer';
+import { Beam } from '../vexflow/beam';
 
 class MusicScore extends Component {
   constructor(props) {
