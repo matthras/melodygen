@@ -38,7 +38,15 @@ class MarkovChainRow extends Component {
 export class MarkovChain extends Component {
   constructor(props) {
     super()
+    this.state = {
+      revealMarkovChain: false
+    }
+    this.markovchainVisibility = this.markovchainVisibility.bind(this)
   }
+  markovchainVisibility() {
+    this.setState({revealMarkovChain: !this.state.revealMarkovChain})
+  }
+
   render() {
     const topLabels = this.props.workingPitchRange.map( (label, index) => 
     <td key={"topLabel"+index}>{label}</td> 
@@ -56,12 +64,15 @@ export class MarkovChain extends Component {
       />
     );
     return (
-      <table>
-        <tbody>
-        <tr><td></td>{topLabels}</tr>
-        {matrixRows}
-        </tbody>
-      </table>
+      <div id="markovChain">
+        <button onClick={this.markovchainVisibility}>{this.state.revealMarkovChain ? 'Hide Markov Chain' : 'Reveal Markov Chain'}</button> 
+        {this.state.revealMarkovChain ? <table>
+          <tbody>
+          <tr><td></td>{topLabels}</tr>
+          {matrixRows}
+          </tbody>
+        </table> : ''}
+      </div>
     )
   } 
 }

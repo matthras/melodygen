@@ -45,12 +45,6 @@ class Options extends Component {
       </div>
       <div className="row">
         <div className="twelve columns">
-          Markov Chain Instructions: <br />
-          <ul>
-            <li>All entries should be between 0 and 1.</li>
-            <li>Each row must add up to 1.</li>
-          </ul>
-          In future there will be checks in place to ensure any edited Markov Chain adheres to the above rules.
           <MarkovChain 
             matrix={this.props.markovChain} 
             workingPitchRange={this.props.workingPitchRange} 
