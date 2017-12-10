@@ -59,8 +59,13 @@ class App extends Component {
   enharmonicEquivalent(note) {
     const splitNote = note.split('');
     const accidental = (splitNote[1]==='#') ? 'b' : '#';
-    const newNote = (splitNote[1]==='#') ? splitNote[0].charCodeAt(0)+1 : splitNote[0].charCodeAt(0)-1;
-    return newNote+accidental;
+    let newNote = (splitNote[1]==='#') ? splitNote[0].charCodeAt(0)+1 : splitNote[0].charCodeAt(0)-1;
+    if(newNote < 97){
+      newNote+= 7
+    } else if (newNote > 103){
+      newNote-= 7
+    }
+    return String.fromCharCode(newNote)+accidental;
   }
   nBarsChange(num) {
     this.setState({nBars: num});
