@@ -45,6 +45,7 @@ class App extends Component {
     this.startingPitch = this.startingPitch.bind(this);
     this.preventRendering = this.preventRendering.bind(this);
     this.generatePitchRange = this.generatePitchRange.bind(this);
+    this.enharmonicEquivalent = this.enharmonicEquivalent.bind(this);
     // Change handlers for <Options>
     this.nBarsChange = this.nBarsChange.bind(this);
     this.nBeatsChange = this.nBeatsChange.bind(this);
@@ -54,7 +55,13 @@ class App extends Component {
   preventRendering() {
     this.setState({renderNewScore: false})
   }
-
+  // Takes a sharpened or flattened note, and returns the enharmonic equivalent.
+  enharmonicEquivalent(note) {
+    const splitNote = note.split('');
+    const accidental = (splitNote[1]==='#') ? 'b' : '#';
+    const newNote = (splitNote[1]==='#') ? splitNote[0].charCodeAt(0)+1 : splitNote[0].charCodeAt(0)-1;
+    return newNote+accidental;
+  }
   nBarsChange(num) {
     this.setState({nBars: num});
   }
