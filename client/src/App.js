@@ -20,23 +20,6 @@ class App extends Component {
       pitchClasses: ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#','b'],
       fullPitchRange: [], // Generated in componentwillmount()
       noteLengthClasses: [1, 2, 4, 8, 16], // Whole note, minim, crotchet, quaver, semiquaver.
-      keySignatures: [
-        [7, 'C#', 'A#'],
-        [6, 'F#', 'D#'],
-        [5, 'B', 'G#'],
-        [4, 'E', 'C#'],
-        [3, 'A', 'F#'],
-        [2, 'D', 'B'],
-        [1, 'G', 'E'],
-        [0, 'C', 'A'],
-        [-1, 'F', 'D'],
-        [-2, 'Bb', 'G'],
-        [-3, 'Eb', 'C'],
-        [-4, 'Ab', 'F'],
-        [-5, 'Db', 'Bb'],
-        [-6, 'Gb', 'Eb'],
-        [-7, 'Cb', 'Ab']
-      ],
       // Initial Conditions
       workingPitchRange: ['c/4','d/4','e/4', 'f/4', 'g/4', 'a/4', 'b/4', 'c/5'],
       workingpitchRangeBottom: 'c/4',
