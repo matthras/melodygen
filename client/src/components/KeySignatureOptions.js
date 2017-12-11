@@ -3,25 +3,10 @@ import React, { Component } from 'react';
 export class KeySignatureOptions extends Component{
   constructor(props) {
     super(props)
-    this.state={ 
-      keySignatures: [
-        // Sharps/Flats, Major Key, Minor Key
-        [7, 'C#', 'A#'],
-        [6, 'F#', 'D#'],
-        [5, 'B', 'G#'],
-        [4, 'E', 'C#'],
-        [3, 'A', 'F#'],
-        [2, 'D', 'B'],
-        [1, 'G', 'E'],
-        [0, 'C', 'A'],
-        [-1, 'F', 'D'],
-        [-2, 'Bb', 'G'],
-        [-3, 'Eb', 'C'],
-        [-4, 'Ab', 'F'],
-        [-5, 'Db', 'Bb'],
-        [-6, 'Gb', 'Eb'],
-        [-7, 'Cb', 'Ab']
-      ],
+    this.state={
+      nSharpsFlats: [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7],
+      majorKeys: ['Cb', 'Gb', 'Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#'],
+      minorKeys: ['Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#']
     }
   }
   render() {
