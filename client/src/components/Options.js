@@ -37,10 +37,7 @@ class Options extends Component {
           </select>
         </div>
         <div className="four columns">
-          <b>Key Signature</b> <br />
-          <select value={this.props.keySignature} onChange={this.keySignatureChange}>
-            <option value="Cmaj">C Major</option>
-          </select>
+          <KeySignatureOptions />
         </div>
       </div>
       <div className="row">

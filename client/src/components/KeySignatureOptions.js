@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 
-export class keySignatureOptions extends Component{
+export class KeySignatureOptions extends Component{
   constructor(props) {
     super(props)
     this.state={ 
       keySignatures: [
+        // Sharps/Flats, Major Key, Minor Key
         [7, 'C#', 'A#'],
         [6, 'F#', 'D#'],
         [5, 'B', 'G#'],
@@ -25,7 +26,12 @@ export class keySignatureOptions extends Component{
   }
   render() {
     return (
-
+      <div id="keySignatureOptions">
+        <b>Key Signature</b> <br />
+        <select value={this.props.keySignature} onChange={this.keySignatureChange}>
+          <option value="Cmaj">C Major</option>
+        </select>
+      </div>
     )
   }
 }
