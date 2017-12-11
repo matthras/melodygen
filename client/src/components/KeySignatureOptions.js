@@ -10,11 +10,38 @@ export class KeySignatureOptions extends Component{
     }
   }
   render() {
+    const nSharpFlatsOptions = this.state.nSharpsFlats.map( (num) => {
+      return (
+        <option value={num}>
+          {(num < 0) ? Math.abs(num)+' flats' : num + ' sharps'} 
+        </option>
+      )
+    })
+    const majorOptions = this.state.majorKeys.map( (key) => {
+      return (
+        <option value={key}>
+          {key + ' major'}
+        </option>
+      )
+    })
+    const minorOptions = this.state.minorKeys.map( (key) => {
+      return(
+        <option value={key}>
+          {key + ' minor'}
+        </option>
+      )
+    })
     return (
       <div id="keySignatureOptions">
         <b>Key Signature</b> <br />
-        <select value={this.props.keySignature} onChange={this.keySignatureChange}>
-          <option value="Cmaj">C Major</option>
+        [Feature Under Construction!] <br />
+        [Only C Major For Now!] <br />
+        <select value={this.props.nSharpsFlats}>
+          {nSharpFlatsOptions}
+        </select>
+        <select>
+          {majorOptions}
+          {minorOptions}
         </select>
       </div>
     )
