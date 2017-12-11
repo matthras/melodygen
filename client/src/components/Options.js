@@ -1,6 +1,7 @@
 // Component holding all the options that users can tweak to modify the settings for the score.
 import React, { Component } from 'react';
-import { MarkovChain } from './MarkovChain.js'
+import { MarkovChain } from './MarkovChain.js';
+import { KeySignatureOptions } from './KeySignatureOptions.js';
 
 class Options extends Component {
   constructor(props){
