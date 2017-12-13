@@ -28,11 +28,26 @@ class Options extends Component {
       <div id="Options">
       <div className="row">
         <div className="four columns">
-          <b>Number of Bars</b> <br /> <input type="number" value={this.props.nBars} onChange={this.nBarsChange} /> <br />
+          <b>Number of Bars</b> <br /> 
+            <input 
+              type="number" 
+              value={this.props.nBars} 
+              onChange={this.nBarsChange} 
+              min="0"
+              step="1"
+            /> <br />
         </div>
         <div className="four columns">
           <b>Time Signature</b> <br />
-          Number of Beats: <input type="number" value={this.props.nBeats} onChange={this.nBeatsChange} /> <br />
+          Number of Beats: 
+            <input 
+              type="number" 
+              value={this.props.nBeats} 
+              onChange={this.nBeatsChange}
+              min="1"
+              max="16"
+              step="1" 
+            /> <br />
           Beat Value: <select value={this.props.beatValue} onChange={this.beatValueChange}>
             <option value="4">4</option>
           </select>
