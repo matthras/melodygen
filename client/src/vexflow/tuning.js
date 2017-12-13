@@ -1,101 +1,80 @@
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Tuning = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
+// [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
 //
 // ## Description
 // This class implements varies types of tunings for tablature.
 
-var _vex = require('./vex');
+import { Vex } from './vex';
+import { Flow } from './tables';
 
-var _tables = require('./tables');
+export class Tuning {
+  static get names() {
+    return {
+      'standard': 'E/5,B/4,G/4,D/4,A/3,E/3',
+      'dagdad': 'D/5,A/4,G/4,D/4,A/3,D/3',
+      'dropd': 'E/5,B/4,G/4,D/4,A/3,D/3',
+      'eb': 'Eb/5,Bb/4,Gb/4,Db/4,Ab/3,Db/3',
+      'standardBanjo': 'D/5,B/4,G/4,D/4,G/5',
+    };
+  }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Tuning = exports.Tuning = function () {
-  _createClass(Tuning, null, [{
-    key: 'names',
-    get: function get() {
-      return {
-        'standard': 'E/5,B/4,G/4,D/4,A/3,E/3',
-        'dagdad': 'D/5,A/4,G/4,D/4,A/3,D/3',
-        'dropd': 'E/5,B/4,G/4,D/4,A/3,D/3',
-        'eb': 'Eb/5,Bb/4,Gb/4,Db/4,Ab/3,Db/3',
-        'standardBanjo': 'D/5,B/4,G/4,D/4,G/5'
-      };
-    }
-  }]);
-
-  function Tuning() {
-    var tuningString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'E/5,B/4,G/4,D/4,A/3,E/3,B/2,E/2';
-
-    _classCallCheck(this, Tuning);
-
+  constructor(tuningString = 'E/5,B/4,G/4,D/4,A/3,E/3,B/2,E/2') {
     // Default to standard tuning.
     this.setTuning(tuningString);
   }
 
-  _createClass(Tuning, [{
-    key: 'noteToInteger',
-    value: function noteToInteger(noteString) {
-      return _tables.Flow.keyProperties(noteString).int_value;
+  noteToInteger(noteString) {
+    return Flow.keyProperties(noteString).int_value;
+  }
+
+  setTuning(noteString) {
+    if (Tuning.names[noteString]) {
+      noteString = Tuning.names[noteString];
     }
-  }, {
-    key: 'setTuning',
-    value: function setTuning(noteString) {
-      if (Tuning.names[noteString]) {
-        noteString = Tuning.names[noteString];
-      }
 
-      this.tuningString = noteString;
-      this.tuningValues = [];
-      this.numStrings = 0;
+    this.tuningString = noteString;
+    this.tuningValues = [];
+    this.numStrings = 0;
 
-      var keys = noteString.split(/\s*,\s*/);
-      if (keys.length === 0) {
-        throw new _vex.Vex.RERR('BadArguments', 'Invalid tuning string: ' + noteString);
-      }
-
-      this.numStrings = keys.length;
-      for (var i = 0; i < this.numStrings; ++i) {
-        this.tuningValues[i] = this.noteToInteger(keys[i]);
-      }
+    const keys = noteString.split(/\s*,\s*/);
+    if (keys.length === 0) {
+      throw new Vex.RERR('BadArguments', 'Invalid tuning string: ' + noteString);
     }
-  }, {
-    key: 'getValueForString',
-    value: function getValueForString(stringNum) {
-      var s = parseInt(stringNum, 10);
-      if (s < 1 || s > this.numStrings) {
-        throw new _vex.Vex.RERR('BadArguments', 'String number must be between 1 and ' + this.numStrings + ':' + stringNum);
-      }
 
-      return this.tuningValues[s - 1];
+    this.numStrings = keys.length;
+    for (let i = 0; i < this.numStrings; ++i) {
+      this.tuningValues[i] = this.noteToInteger(keys[i]);
     }
-  }, {
-    key: 'getValueForFret',
-    value: function getValueForFret(fretNum, stringNum) {
-      var stringValue = this.getValueForString(stringNum);
-      var f = parseInt(fretNum, 10);
+  }
 
-      if (f < 0) {
-        throw new _vex.Vex.RERR('BadArguments', 'Fret number must be 0 or higher: ' + fretNum);
-      }
-
-      return stringValue + f;
+  getValueForString(stringNum) {
+    const s = parseInt(stringNum, 10);
+    if (s < 1 || s > this.numStrings) {
+      throw new Vex.RERR(
+        'BadArguments', `String number must be between 1 and ${this.numStrings}:${stringNum}`
+      );
     }
-  }, {
-    key: 'getNoteForFret',
-    value: function getNoteForFret(fretNum, stringNum) {
-      var noteValue = this.getValueForFret(fretNum, stringNum);
 
-      var octave = Math.floor(noteValue / 12);
-      var value = noteValue % 12;
+    return this.tuningValues[s - 1];
+  }
 
-      return _tables.Flow.integerToNote(value) + '/' + octave;
+  getValueForFret(fretNum, stringNum) {
+    const stringValue = this.getValueForString(stringNum);
+    const f = parseInt(fretNum, 10);
+
+    if (f < 0) {
+      throw new Vex.RERR('BadArguments', 'Fret number must be 0 or higher: ' +
+          fretNum);
     }
-  }]);
 
-  return Tuning;
-}();
+    return stringValue + f;
+  }
+
+  getNoteForFret(fretNum, stringNum) {
+    const noteValue = this.getValueForFret(fretNum, stringNum);
+
+    const octave = Math.floor(noteValue / 12);
+    const value = noteValue % 12;
+
+    return Flow.integerToNote(value) + '/' + octave;
+  }
+}

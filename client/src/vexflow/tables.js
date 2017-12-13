@@ -1,19 +1,12 @@
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Flow = undefined;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
+// [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
 
 /* eslint-disable key-spacing */
 
-var _vex = require('./vex');
+import { Vex } from './vex';
+import { Fraction } from './fraction';
+import { Glyph } from './glyph';
 
-var _fraction = require('./fraction');
-
-var _glyph = require('./glyph');
-
-var Flow = {
+const Flow = {
   STEM_WIDTH: 1.5,
   STEM_HEIGHT: 35,
   STAVE_LINE_THICKNESS: 1,
@@ -32,14 +25,15 @@ var Flow = {
   TEXT_HEIGHT_OFFSET_HACK: 1,
 
   /* Kerning (DEPRECATED) */
-  IsKerned: true
+  IsKerned: true,
 };
 
-Flow.clefProperties = function (clef) {
-  if (!clef) throw new _vex.Vex.RERR('BadArgument', 'Invalid clef: ' + clef);
 
-  var props = Flow.clefProperties.values[clef];
-  if (!props) throw new _vex.Vex.RERR('BadArgument', 'Invalid clef: ' + clef);
+Flow.clefProperties = clef => {
+  if (!clef) throw new Vex.RERR('BadArgument', 'Invalid clef: ' + clef);
+
+  const props = Flow.clefProperties.values[clef];
+  if (!props) throw new Vex.RERR('BadArgument', 'Invalid clef: ' + clef);
 
   return props;
 };
@@ -55,7 +49,7 @@ Flow.clefProperties.values = {
   'baritone-c': { line_shift: 5 },
   'baritone-f': { line_shift: 5 },
   'subbass': { line_shift: 7 },
-  'french': { line_shift: -1 }
+  'french': { line_shift: -1 },
 };
 
 /*
@@ -64,51 +58,53 @@ Flow.clefProperties.values = {
   The last argument, params, is a struct the currently can contain one option,
   octave_shift for clef ottavation (0 = default; 1 = 8va; -1 = 8vb, etc.).
 */
-Flow.keyProperties = function (key, clef, params) {
+Flow.keyProperties = (key, clef, params) => {
   if (clef === undefined) {
     clef = 'treble';
   }
 
-  var options = { octave_shift: 0 };
+  const options = { octave_shift: 0 };
 
-  if ((typeof params === 'undefined' ? 'undefined' : _typeof(params)) === 'object') {
-    _vex.Vex.Merge(options, params);
+  if (typeof params === 'object') {
+    Vex.Merge(options, params);
   }
 
-  var pieces = key.split('/');
+  const pieces = key.split('/');
 
   if (pieces.length < 2) {
-    throw new _vex.Vex.RERR('BadArguments', 'Key must have note + octave and an optional glyph: ' + key);
+    throw new Vex.RERR('BadArguments', `Key must have note + octave and an optional glyph: ${key}`);
   }
 
-  var k = pieces[0].toUpperCase();
-  var value = Flow.keyProperties.note_values[k];
-  if (!value) throw new _vex.Vex.RERR('BadArguments', 'Invalid key name: ' + k);
+  const k = pieces[0].toUpperCase();
+  const value = Flow.keyProperties.note_values[k];
+  if (!value) throw new Vex.RERR('BadArguments', 'Invalid key name: ' + k);
   if (value.octave) pieces[1] = value.octave;
 
-  var octave = parseInt(pieces[1], 10);
+  let octave = parseInt(pieces[1], 10);
 
   // Octave_shift is the shift to compensate for clef 8va/8vb.
   octave += -1 * options.octave_shift;
 
-  var base_index = octave * 7 - 4 * 7;
-  var line = (base_index + value.index) / 2;
+  const base_index = (octave * 7) - (4 * 7);
+  let line = (base_index + value.index) / 2;
   line += Flow.clefProperties(clef).line_shift;
 
-  var stroke = 0;
+  let stroke = 0;
 
-  if (line <= 0 && line * 2 % 2 === 0) stroke = 1; // stroke up
-  if (line >= 6 && line * 2 % 2 === 0) stroke = -1; // stroke down
+  if (line <= 0 && (((line * 2) % 2) === 0)) stroke = 1;  // stroke up
+  if (line >= 6 && (((line * 2) % 2) === 0)) stroke = -1; // stroke down
 
   // Integer value for note arithmetic.
-  var int_value = typeof value.int_val !== 'undefined' ? octave * 12 + value.int_val : null;
+  const int_value = typeof(value.int_val) !== 'undefined'
+    ? (octave * 12) + value.int_val
+    : null;
 
   /* Check if the user specified a glyph. */
-  var code = value.code;
-  var shift_right = value.shift_right;
+  let code = value.code;
+  let shift_right = value.shift_right;
   if (pieces.length > 2 && pieces[2]) {
-    var glyph_name = pieces[2].toUpperCase();
-    var note_glyph = Flow.keyProperties.note_glyph[glyph_name];
+    const glyph_name = pieces[2].toUpperCase();
+    const note_glyph = Flow.keyProperties.note_glyph[glyph_name];
     if (note_glyph) {
       code = note_glyph.code;
       shift_right = note_glyph.shift_right;
@@ -117,14 +113,14 @@ Flow.keyProperties = function (key, clef, params) {
 
   return {
     key: k,
-    octave: octave,
-    line: line,
-    int_value: int_value,
+    octave,
+    line,
+    int_value,
     accidental: value.accidental,
-    code: code,
-    stroke: stroke,
-    shift_right: shift_right,
-    displaced: false
+    code,
+    stroke,
+    shift_right,
+    displaced: false,
   };
 };
 
@@ -177,8 +173,8 @@ Flow.keyProperties.note_values = {
     accidental: '',
     octave: 4,
     code: 'v3e',
-    shift_right: 5.5
-  }
+    shift_right: 5.5,
+  },
 };
 
 Flow.keyProperties.note_glyph = {
@@ -198,21 +194,21 @@ Flow.keyProperties.note_glyph = {
   'X0': { code: 'v92', shift_right: -2 },
   'X1': { code: 'v95', shift_right: -0.5 },
   'X2': { code: 'v7f', shift_right: 0.5 },
-  'X3': { code: 'v3b', shift_right: -2 }
+  'X3': { code: 'v3b', shift_right: -2 },
 };
 
-Flow.integerToNote = function (integer) {
-  if (typeof integer === 'undefined') {
-    throw new _vex.Vex.RERR('BadArguments', 'Undefined integer for integerToNote');
+Flow.integerToNote = integer => {
+  if (typeof(integer) === 'undefined') {
+    throw new Vex.RERR('BadArguments', 'Undefined integer for integerToNote');
   }
 
   if (integer < -2) {
-    throw new _vex.Vex.RERR('BadArguments', 'integerToNote requires integer > -2: ' + integer);
+    throw new Vex.RERR('BadArguments', `integerToNote requires integer > -2: ${integer}`);
   }
 
-  var noteValue = Flow.integerToNote.table[integer];
+  const noteValue = Flow.integerToNote.table[integer];
   if (!noteValue) {
-    throw new _vex.Vex.RERR('BadArguments', 'Unknown note value for integer: ' + integer);
+    throw new Vex.RERR('BadArguments', `Unknown note value for integer: ${integer}`);
   }
 
   return noteValue;
@@ -230,18 +226,17 @@ Flow.integerToNote.table = {
   8: 'G#',
   9: 'A',
   10: 'A#',
-  11: 'B'
+  11: 'B',
 };
 
-Flow.tabToGlyph = function (fret) {
-  var scale = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1.0;
 
-  var glyph = null;
-  var width = 0;
-  var shift_y = 0;
+Flow.tabToGlyph = (fret, scale = 1.0) => {
+  let glyph = null;
+  let width = 0;
+  let shift_y = 0;
 
   if (fret.toString().toUpperCase() === 'X') {
-    var glyphMetrics = new _glyph.Glyph('v7f', Flow.DEFAULT_TABLATURE_FONT_SCALE).getMetrics();
+    const glyphMetrics = new Glyph('v7f', Flow.DEFAULT_TABLATURE_FONT_SCALE).getMetrics();
     glyph = 'v7f';
     width = glyphMetrics.width;
     shift_y = -glyphMetrics.height / 2;
@@ -252,27 +247,21 @@ Flow.tabToGlyph = function (fret) {
   return {
     text: fret,
     code: glyph,
-    getWidth: function getWidth() {
-      return width * scale;
-    },
-    shift_y: shift_y
+    getWidth: () => width * scale,
+    shift_y,
   };
 };
 
-Flow.textWidth = function (text) {
-  return 7 * text.toString().length;
-};
+Flow.textWidth = text => 7 * text.toString().length;
 
-Flow.articulationCodes = function (artic) {
-  return Flow.articulationCodes.articulations[artic];
-};
+Flow.articulationCodes = artic => Flow.articulationCodes.articulations[artic];
 
 Flow.articulationCodes.articulations = {
   'a.': { code: 'v23', between_lines: true }, // Staccato
   'av': { code: 'v28', between_lines: true }, // Staccatissimo
   'a>': { code: 'v42', between_lines: true }, // Accent
   'a-': { code: 'v25', between_lines: true }, // Tenuto
-  'a^': { code: 'va', between_lines: false }, // Marcato
+  'a^': { code: 'va',  between_lines: false }, // Marcato
   'a+': { code: 'v8b', between_lines: false }, // Left hand pizzicato
   'ao': { code: 'v94', between_lines: false }, // Snap pizzicato
   'ah': { code: 'vb9', between_lines: false }, // Natural harmonic or open note
@@ -280,51 +269,49 @@ Flow.articulationCodes.articulations = {
   'a@u': { code: 'v5b', between_lines: false }, // Fermata below staff
   'a|': { code: 'v75', between_lines: false }, // Bow up - up stroke
   'am': { code: 'v97', between_lines: false }, // Bow down - down stroke
-  'a,': { code: 'vb3', between_lines: false } // Choked
+  'a,': { code: 'vb3', between_lines: false }, // Choked
 };
 
-Flow.accidentalCodes = function (acc) {
-  return Flow.accidentalCodes.accidentals[acc];
-};
+Flow.accidentalCodes = acc => Flow.accidentalCodes.accidentals[acc];
 
 Flow.accidentalCodes.accidentals = {
-  '#': { code: 'v18', parenRightPaddingAdjustment: -1 },
-  '##': { code: 'v7f', parenRightPaddingAdjustment: -1 },
-  'b': { code: 'v44', parenRightPaddingAdjustment: -2 },
-  'bb': { code: 'v26', parenRightPaddingAdjustment: -2 },
-  'n': { code: 'v4e', parenRightPaddingAdjustment: -1 },
-  '{': { code: 'v9c', parenRightPaddingAdjustment: -1 },
-  '}': { code: 'v84', parenRightPaddingAdjustment: -1 },
-  'db': { code: 'v9e', parenRightPaddingAdjustment: -1 },
-  'd': { code: 'vab', parenRightPaddingAdjustment: 0 },
+  '#':   { code: 'v18', parenRightPaddingAdjustment: -1 },
+  '##':  { code: 'v7f', parenRightPaddingAdjustment: -1 },
+  'b':   { code: 'v44', parenRightPaddingAdjustment: -2 },
+  'bb':  { code: 'v26', parenRightPaddingAdjustment: -2 },
+  'n':   { code: 'v4e', parenRightPaddingAdjustment: -1 },
+  '{':   { code: 'v9c', parenRightPaddingAdjustment: -1 },
+  '}':   { code: 'v84', parenRightPaddingAdjustment: -1 },
+  'db':  { code: 'v9e', parenRightPaddingAdjustment: -1 },
+  'd':   { code: 'vab', parenRightPaddingAdjustment:  0 },
   'bbs': { code: 'v90', parenRightPaddingAdjustment: -1 },
-  '++': { code: 'v51', parenRightPaddingAdjustment: -1 },
-  '+': { code: 'v78', parenRightPaddingAdjustment: -1 },
-  '+-': { code: 'v8d', parenRightPaddingAdjustment: -1 },
+  '++':  { code: 'v51', parenRightPaddingAdjustment: -1 },
+  '+':   { code: 'v78', parenRightPaddingAdjustment: -1 },
+  '+-':  { code: 'v8d', parenRightPaddingAdjustment: -1 },
   '++-': { code: 'v7a', parenRightPaddingAdjustment: -1 },
-  'bs': { code: 'vb7', parenRightPaddingAdjustment: -1 },
+  'bs':  { code: 'vb7', parenRightPaddingAdjustment: -1 },
   'bss': { code: 'v39', parenRightPaddingAdjustment: -1 },
-  'o': { code: 'vd0', parenRightPaddingAdjustment: -1 },
-  'k': { code: 'vd1', parenRightPaddingAdjustment: -1 }
+  'o':   { code: 'vd0', parenRightPaddingAdjustment: -1 },
+  'k':   { code: 'vd1', parenRightPaddingAdjustment: -1 },
 };
 
 Flow.accidentalColumnsTable = {
   1: {
     a: [1],
-    b: [1]
+    b: [1],
   },
   2: {
-    a: [1, 2]
+    a: [1, 2],
   },
   3: {
     a: [1, 3, 2],
     b: [1, 2, 1],
-    second_on_bottom: [1, 2, 3]
+    second_on_bottom: [1, 2, 3],
   },
   4: {
     a: [1, 3, 4, 2],
     b: [1, 2, 3, 1],
-    spaced_out_tetrachord: [1, 2, 1, 2]
+    spaced_out_tetrachord: [1, 2, 1, 2],
   },
   5: {
     a: [1, 3, 5, 4, 2],
@@ -335,13 +322,11 @@ Flow.accidentalColumnsTable = {
     a: [1, 3, 5, 6, 4, 2],
     b: [1, 2, 4, 5, 3, 1],
     spaced_out_hexachord: [1, 3, 2, 1, 3, 2],
-    very_spaced_out_hexachord: [1, 2, 1, 2, 1, 2]
-  }
+    very_spaced_out_hexachord: [1, 2, 1, 2, 1, 2],
+  },
 };
 
-Flow.ornamentCodes = function (acc) {
-  return Flow.ornamentCodes.ornaments[acc];
-};
+Flow.ornamentCodes = acc => Flow.ornamentCodes.ornaments[acc];
 
 Flow.ornamentCodes.ornaments = {
   'mordent': { code: 'v1e' },
@@ -356,26 +341,26 @@ Flow.ornamentCodes.ornaments = {
   'upmordent': { code: 'v29' },
   'downmordent': { code: 'v68' },
   'lineprall': { code: 'v20' },
-  'prallprall': { code: 'v86' }
+  'prallprall': { code: 'v86' },
 };
 
-Flow.keySignature = function (spec) {
-  var keySpec = Flow.keySignature.keySpecs[spec];
+Flow.keySignature = spec => {
+  const keySpec = Flow.keySignature.keySpecs[spec];
 
   if (!keySpec) {
-    throw new _vex.Vex.RERR('BadKeySignature', 'Bad key signature spec: \'' + spec + '\'');
+    throw new Vex.RERR('BadKeySignature', `Bad key signature spec: '${spec}'`);
   }
 
   if (!keySpec.acc) {
     return [];
   }
 
-  var notes = Flow.keySignature.accidentalList(keySpec.acc);
+  const notes = Flow.keySignature.accidentalList(keySpec.acc);
 
-  var acc_list = [];
-  for (var i = 0; i < keySpec.num; ++i) {
-    var line = notes[i];
-    acc_list.push({ type: keySpec.acc, line: line });
+  const acc_list = [];
+  for (let i = 0; i < keySpec.num; ++i) {
+    const line = notes[i];
+    acc_list.push({ type: keySpec.acc, line });
   }
 
   return acc_list;
@@ -411,7 +396,7 @@ Flow.keySignature.keySpecs = {
   'F#': { acc: '#', num: 6 },
   'D#m': { acc: '#', num: 6 },
   'C#': { acc: '#', num: 7 },
-  'A#m': { acc: '#', num: 7 }
+  'A#m': { acc: '#', num: 7 },
 };
 
 Flow.unicode = {
@@ -423,62 +408,62 @@ Flow.unicode = {
   'triangle': String.fromCharCode(parseInt('25B3', 16)),
   // half-diminished
   'o-with-slash': String.fromCharCode(parseInt('00F8', 16)),
-  // Diminished
+   // Diminished
   'degrees': String.fromCharCode(parseInt('00B0', 16)),
-  'circle': String.fromCharCode(parseInt('25CB', 16))
+  'circle': String.fromCharCode(parseInt('25CB', 16)),
 };
 
-Flow.keySignature.accidentalList = function (acc) {
-  var patterns = {
+Flow.keySignature.accidentalList = (acc) => {
+  const patterns = {
     'b': [2, 0.5, 2.5, 1, 3, 1.5, 3.5],
-    '#': [0, 1.5, -0.5, 1, 2.5, 0.5, 2]
+    '#': [0, 1.5, -0.5, 1, 2.5, 0.5, 2],
   };
 
   return patterns[acc];
 };
 
-Flow.parseNoteDurationString = function (durationString) {
-  if (typeof durationString !== 'string') {
+Flow.parseNoteDurationString = durationString => {
+  if (typeof(durationString) !== 'string') {
     return null;
   }
 
-  var regexp = /(\d*\/?\d+|[a-z])(d*)([nrhms]|$)/;
+  const regexp = /(\d*\/?\d+|[a-z])(d*)([nrhms]|$)/;
 
-  var result = regexp.exec(durationString);
+  const result = regexp.exec(durationString);
   if (!result) {
     return null;
   }
 
-  var duration = result[1];
-  var dots = result[2].length;
-  var type = result[3];
+  const duration = result[1];
+  const dots = result[2].length;
+  let type = result[3];
 
   if (type.length === 0) {
     type = 'n';
   }
 
   return {
-    duration: duration,
-    dots: dots,
-    type: type
+    duration,
+    dots,
+    type,
   };
 };
 
-Flow.parseNoteData = function (noteData) {
-  var duration = noteData.duration;
+Flow.parseNoteData = noteData => {
+  const duration = noteData.duration;
 
   // Preserve backwards-compatibility
-  var durationStringData = Flow.parseNoteDurationString(duration);
+  const durationStringData = Flow.parseNoteDurationString(duration);
   if (!durationStringData) {
     return null;
   }
 
-  var ticks = Flow.durationToTicks(durationStringData.duration);
+  let ticks = Flow.durationToTicks(durationStringData.duration);
   if (ticks == null) {
     return null;
   }
 
-  var type = noteData.type;
+  let type = noteData.type;
 
   if (type) {
     if (!(type === 'n' || type === 'r' || type === 'h' || type === 'm' || type === 's')) {
@@ -491,15 +476,15 @@ Flow.parseNoteData = function (noteData) {
     }
   }
 
-  var dots = noteData.dots ? noteData.dots : durationStringData.dots;
+  const dots = noteData.dots ? noteData.dots : durationStringData.dots;
 
-  if (typeof dots !== 'number') {
+  if (typeof(dots) !== 'number') {
     return null;
   }
 
-  var currentTicks = ticks;
+  let currentTicks = ticks;
 
-  for (var i = 0; i < dots; i++) {
+  for (let i = 0; i < dots; i++) {
     if (currentTicks <= 1) return null;
 
     currentTicks = currentTicks / 2;
@@ -508,9 +493,9 @@ Flow.parseNoteData = function (noteData) {
 
   return {
     duration: durationStringData.duration,
-    type: type,
-    dots: dots,
-    ticks: ticks
+    type,
+    dots,
+    ticks,
   };
 };
 
@@ -518,34 +503,30 @@ Flow.parseNoteData = function (noteData) {
 // If the input isn't an alias, simply return the input.
 //
 // example: 'q' -> '4', '8' -> '8'
-Flow.sanitizeDuration = function (duration) {
-  var alias = Flow.durationAliases[duration];
+Flow.sanitizeDuration = duration => {
+  const alias = Flow.durationAliases[duration];
   if (alias !== undefined) {
     duration = alias;
   }
 
   if (Flow.durationToTicks.durations[duration] === undefined) {
-    throw new _vex.Vex.RERR('BadArguments', 'The provided duration is not valid: ' + duration);
+    throw new Vex.RERR('BadArguments', `The provided duration is not valid: ${duration}`);
   }
 
   return duration;
 };
 
 // Convert the `duration` to an fraction
-Flow.durationToFraction = function (duration) {
-  return new _fraction.Fraction().parse(Flow.sanitizeDuration(duration));
-};
+Flow.durationToFraction = duration => new Fraction().parse(Flow.sanitizeDuration(duration));
 
 // Convert the `duration` to an number
-Flow.durationToNumber = function (duration) {
-  return Flow.durationToFraction(duration).value();
-};
+Flow.durationToNumber = duration => Flow.durationToFraction(duration).value();
 
 // Convert the `duration` to total ticks
-Flow.durationToTicks = function (duration) {
+Flow.durationToTicks = duration => {
   duration = Flow.sanitizeDuration(duration);
 
-  var ticks = Flow.durationToTicks.durations[duration];
+  const ticks = Flow.durationToTicks.durations[duration];
   if (ticks === undefined) {
     return null;
   }
@@ -563,7 +544,7 @@ Flow.durationToTicks.durations = {
   '32': Flow.RESOLUTION / 32,
   '64': Flow.RESOLUTION / 64,
   '128': Flow.RESOLUTION / 128,
-  '256': Flow.RESOLUTION / 256
+  '256': Flow.RESOLUTION / 256,
 };
 
 Flow.durationAliases = {
@@ -575,13 +556,13 @@ Flow.durationAliases = {
   // consume ticks, so this should be a no-op.
   //
   // TODO(0xfe): This needs to be cleaned up.
-  'b': '256'
+  'b': '256',
 };
 
-Flow.durationToGlyph = function (duration, type) {
+Flow.durationToGlyph = (duration, type) => {
   duration = Flow.sanitizeDuration(duration);
 
-  var code = Flow.durationToGlyph.duration_codes[duration];
+  const code = Flow.durationToGlyph.duration_codes[duration];
   if (code === undefined) {
     return null;
   }
@@ -590,23 +571,20 @@ Flow.durationToGlyph = function (duration, type) {
     type = 'n';
   }
 
-  var glyphTypeProperties = code.type[type];
+  const glyphTypeProperties = code.type[type];
   if (glyphTypeProperties === undefined) {
     return null;
   }
 
-  return _vex.Vex.Merge(_vex.Vex.Merge({}, code.common), glyphTypeProperties);
+  return Vex.Merge(Vex.Merge({}, code.common), glyphTypeProperties);
 };
 
 Flow.durationToGlyph.duration_codes = {
   '1/2': {
     common: {
-      getWidth: function getWidth() {
-        var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Flow.DEFAULT_NOTATION_FONT_SCALE;
-
-        return new _glyph.Glyph(this.code_head || 'v53', scale).getMetrics().width;
+      getWidth(scale = Flow.DEFAULT_NOTATION_FONT_SCALE) {
+        return new Glyph(this.code_head || 'v53', scale).getMetrics().width;
       },
-
       stem: false,
       stem_offset: 0,
       flag: false,
@@ -618,42 +596,37 @@ Flow.durationToGlyph.duration_codes = {
       tabnote_stem_down_extension: -Flow.STEM_HEIGHT,
       dot_shiftY: 0,
       line_above: 0,
-      line_below: 0
+      line_below: 0,
     },
     type: {
       'n': { // Breve note
-        code_head: 'v53'
+        code_head: 'v53',
       },
       'h': { // Breve note harmonic
-        code_head: 'v59'
+        code_head: 'v59',
       },
       'm': { // Breve note muted -
         code_head: 'vf',
-        stem_offset: 0
+        stem_offset: 0,
       },
       'r': { // Breve rest
         code_head: 'v31',
         rest: true,
         position: 'B/5',
-        dot_shiftY: 0.5
+        dot_shiftY: 0.5,
       },
       's': { // Breve note slash -
         // Drawn with canvas primitives
-        getWidth: function getWidth() {
-          return Flow.SLASH_NOTEHEAD_WIDTH;
-        },
-        position: 'B/4'
-      }
-    }
+        getWidth: () => Flow.SLASH_NOTEHEAD_WIDTH,
+        position: 'B/4',
+      },
+    },
   },
   '1': {
     common: {
-      getWidth: function getWidth() {
-        var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Flow.DEFAULT_NOTATION_FONT_SCALE;
-
-        return new _glyph.Glyph(this.code_head || 'v1d', scale).getMetrics().width;
+      getWidth(scale = Flow.DEFAULT_NOTATION_FONT_SCALE) {
+        return new Glyph(this.code_head || 'v1d', scale).getMetrics().width;
       },
-
       stem: false,
       stem_offset: 0,
       flag: false,
@@ -665,42 +638,37 @@ Flow.durationToGlyph.duration_codes = {
       tabnote_stem_down_extension: -Flow.STEM_HEIGHT,
       dot_shiftY: 0,
       line_above: 0,
-      line_below: 0
+      line_below: 0,
     },
     type: {
       'n': { // Whole note
-        code_head: 'v1d'
+        code_head: 'v1d',
       },
       'h': { // Whole note harmonic
-        code_head: 'v46'
+        code_head: 'v46',
       },
       'm': { // Whole note muted
         code_head: 'v92',
-        stem_offset: -3
+        stem_offset: -3,
       },
       'r': { // Whole rest
         code_head: 'v5c',
         rest: true,
         position: 'D/5',
-        dot_shiftY: 0.5
+        dot_shiftY: 0.5,
       },
       's': { // Whole note slash
         // Drawn with canvas primitives
-        getWidth: function getWidth() {
-          return Flow.SLASH_NOTEHEAD_WIDTH;
-        },
-        position: 'B/4'
-      }
-    }
+        getWidth: () => Flow.SLASH_NOTEHEAD_WIDTH,
+        position: 'B/4',
+      },
+    },
   },
   '2': {
     common: {
-      getWidth: function getWidth() {
-        var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Flow.DEFAULT_NOTATION_FONT_SCALE;
-
-        return new _glyph.Glyph(this.code_head || 'v81', scale).getMetrics().width;
+      getWidth(scale = Flow.DEFAULT_NOTATION_FONT_SCALE) {
+        return new Glyph(this.code_head || 'v81', scale).getMetrics().width;
       },
-
       stem: true,
       stem_offset: 0,
       flag: false,
@@ -712,43 +680,38 @@ Flow.durationToGlyph.duration_codes = {
       tabnote_stem_down_extension: 0,
       dot_shiftY: 0,
       line_above: 0,
-      line_below: 0
+      line_below: 0,
     },
     type: {
       'n': { // Half note
-        code_head: 'v81'
+        code_head: 'v81',
       },
       'h': { // Half note harmonic
-        code_head: 'v2d'
+        code_head: 'v2d',
       },
       'm': { // Half note muted
         code_head: 'v95',
-        stem_offset: -3
+        stem_offset: -3,
       },
       'r': { // Half rest
         code_head: 'vc',
         stem: false,
         rest: true,
         position: 'B/4',
-        dot_shiftY: -0.5
+        dot_shiftY: -0.5,
       },
       's': { // Half note slash
         // Drawn with canvas primitives
-        getWidth: function getWidth() {
-          return Flow.SLASH_NOTEHEAD_WIDTH;
-        },
-        position: 'B/4'
-      }
-    }
+        getWidth: () => Flow.SLASH_NOTEHEAD_WIDTH,
+        position: 'B/4',
+      },
+    },
   },
   '4': {
     common: {
-      getWidth: function getWidth() {
-        var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Flow.DEFAULT_NOTATION_FONT_SCALE;
-
-        return new _glyph.Glyph(this.code_head || 'vb', scale).getMetrics().width;
+      getWidth(scale = Flow.DEFAULT_NOTATION_FONT_SCALE) {
+        return new Glyph(this.code_head || 'vb', scale).getMetrics().width;
       },
-
       stem: true,
       stem_offset: 0,
       flag: false,
@@ -760,18 +723,18 @@ Flow.durationToGlyph.duration_codes = {
       tabnote_stem_down_extension: 0,
       dot_shiftY: 0,
       line_above: 0,
-      line_below: 0
+      line_below: 0,
     },
     type: {
       'n': { // Quarter note
-        code_head: 'vb'
+        code_head: 'vb',
       },
       'h': { // Quarter harmonic
-        code_head: 'v22'
+        code_head: 'v22',
       },
       'm': { // Quarter muted
         code_head: 'v3e',
-        stem_offset: -3
+        stem_offset: -3,
       },
       'r': { // Quarter rest
         code_head: 'v7c',
@@ -780,25 +743,20 @@ Flow.durationToGlyph.duration_codes = {
         position: 'B/4',
         dot_shiftY: -0.5,
         line_above: 1.5,
-        line_below: 1.5
+        line_below: 1.5,
       },
       's': { // Quarter slash
-        // Drawn with canvas primitives
-        getWidth: function getWidth() {
-          return Flow.SLASH_NOTEHEAD_WIDTH;
-        },
-        position: 'B/4'
-      }
-    }
+         // Drawn with canvas primitives
+        getWidth: () => Flow.SLASH_NOTEHEAD_WIDTH,
+        position: 'B/4',
+      },
+    },
   },
   '8': {
     common: {
-      getWidth: function getWidth() {
-        var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Flow.DEFAULT_NOTATION_FONT_SCALE;
-
-        return new _glyph.Glyph(this.code_head || 'vb', scale).getMetrics().width;
+      getWidth(scale = Flow.DEFAULT_NOTATION_FONT_SCALE) {
+        return new Glyph(this.code_head || 'vb', scale).getMetrics().width;
       },
-
       stem: true,
       stem_offset: 0,
       flag: true,
@@ -813,17 +771,17 @@ Flow.durationToGlyph.duration_codes = {
       tabnote_stem_down_extension: 0,
       dot_shiftY: 0,
       line_above: 0,
-      line_below: 0
+      line_below: 0,
     },
     type: {
       'n': { // Eighth note
-        code_head: 'vb'
+        code_head: 'vb',
       },
       'h': { // Eighth note harmonic
-        code_head: 'v22'
+        code_head: 'v22',
       },
       'm': { // Eighth note muted
-        code_head: 'v3e'
+        code_head: 'v3e',
       },
       'r': { // Eighth rest
         code_head: 'va5',
@@ -833,26 +791,21 @@ Flow.durationToGlyph.duration_codes = {
         position: 'B/4',
         dot_shiftY: -0.5,
         line_above: 1.0,
-        line_below: 1.0
+        line_below: 1.0,
       },
       's': { // Eight slash
         // Drawn with canvas primitives
-        getWidth: function getWidth() {
-          return Flow.SLASH_NOTEHEAD_WIDTH;
-        },
-        position: 'B/4'
-      }
-    }
+        getWidth: () => Flow.SLASH_NOTEHEAD_WIDTH,
+        position: 'B/4',
+      },
+    },
   },
   '16': {
     common: {
       beam_count: 2,
-      getWidth: function getWidth() {
-        var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Flow.DEFAULT_NOTATION_FONT_SCALE;
-
-        return new _glyph.Glyph(this.code_head || 'vb', scale).getMetrics().width;
+      getWidth(scale = Flow.DEFAULT_NOTATION_FONT_SCALE) {
+        return new Glyph(this.code_head || 'vb', scale).getMetrics().width;
       },
-
       stem: true,
       stem_offset: 0,
       flag: true,
@@ -866,17 +819,17 @@ Flow.durationToGlyph.duration_codes = {
       tabnote_stem_down_extension: 0,
       dot_shiftY: 0,
       line_above: 0,
-      line_below: 0
+      line_below: 0,
     },
     type: {
       'n': { // Sixteenth note
-        code_head: 'vb'
+        code_head: 'vb',
       },
       'h': { // Sixteenth note harmonic
-        code_head: 'v22'
+        code_head: 'v22',
       },
       'm': { // Sixteenth note muted
-        code_head: 'v3e'
+        code_head: 'v3e',
       },
       'r': { // Sixteenth rest
         code_head: 'v3c',
@@ -886,26 +839,21 @@ Flow.durationToGlyph.duration_codes = {
         position: 'B/4',
         dot_shiftY: -0.5,
         line_above: 1.0,
-        line_below: 2.0
+        line_below: 2.0,
       },
       's': { // Sixteenth slash
         // Drawn with canvas primitives
-        getWidth: function getWidth() {
-          return Flow.SLASH_NOTEHEAD_WIDTH;
-        },
-        position: 'B/4'
-      }
-    }
+        getWidth: () => Flow.SLASH_NOTEHEAD_WIDTH,
+        position: 'B/4',
+      },
+    },
   },
   '32': {
     common: {
       beam_count: 3,
-      getWidth: function getWidth() {
-        var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Flow.DEFAULT_NOTATION_FONT_SCALE;
-
-        return new _glyph.Glyph(this.code_head || 'vb', scale).getMetrics().width;
+      getWidth(scale = Flow.DEFAULT_NOTATION_FONT_SCALE) {
+        return new Glyph(this.code_head || 'vb', scale).getMetrics().width;
       },
-
       stem: true,
       stem_offset: 0,
       flag: true,
@@ -919,17 +867,17 @@ Flow.durationToGlyph.duration_codes = {
       tabnote_stem_down_extension: 5,
       dot_shiftY: 0,
       line_above: 0,
-      line_below: 0
+      line_below: 0,
     },
     type: {
       'n': { // Thirty-second note
-        code_head: 'vb'
+        code_head: 'vb',
       },
       'h': { // Thirty-second harmonic
-        code_head: 'v22'
+        code_head: 'v22',
       },
       'm': { // Thirty-second muted
-        code_head: 'v3e'
+        code_head: 'v3e',
       },
       'r': { // Thirty-second rest
         code_head: 'v55',
@@ -939,26 +887,21 @@ Flow.durationToGlyph.duration_codes = {
         position: 'B/4',
         dot_shiftY: -1.5,
         line_above: 2.0,
-        line_below: 2.0
+        line_below: 2.0,
       },
       's': { // Thirty-second slash
         // Drawn with canvas primitives
-        getWidth: function getWidth() {
-          return Flow.SLASH_NOTEHEAD_WIDTH;
-        },
-        position: 'B/4'
-      }
-    }
+        getWidth: () => Flow.SLASH_NOTEHEAD_WIDTH,
+        position: 'B/4',
+      },
+    },
   },
   '64': {
     common: {
       beam_count: 4,
-      getWidth: function getWidth() {
-        var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Flow.DEFAULT_NOTATION_FONT_SCALE;
-
-        return new _glyph.Glyph(this.code_head || 'vb', scale).getMetrics().width;
+      getWidth(scale = Flow.DEFAULT_NOTATION_FONT_SCALE) {
+        return new Glyph(this.code_head || 'vb', scale).getMetrics().width;
       },
-
       stem: true,
       stem_offset: 0,
       flag: true,
@@ -972,17 +915,17 @@ Flow.durationToGlyph.duration_codes = {
       tabnote_stem_down_extension: 9,
       dot_shiftY: 0,
       line_above: 0,
-      line_below: 0
+      line_below: 0,
     },
     type: {
       'n': { // Sixty-fourth note
-        code_head: 'vb'
+        code_head: 'vb',
       },
       'h': { // Sixty-fourth harmonic
-        code_head: 'v22'
+        code_head: 'v22',
       },
       'm': { // Sixty-fourth muted
-        code_head: 'v3e'
+        code_head: 'v3e',
       },
       'r': { // Sixty-fourth rest
         code_head: 'v38',
@@ -992,26 +935,21 @@ Flow.durationToGlyph.duration_codes = {
         position: 'B/4',
         dot_shiftY: -1.5,
         line_above: 2.0,
-        line_below: 3.0
+        line_below: 3.0,
       },
       's': { // Sixty-fourth slash
         // Drawn with canvas primitives
-        getWidth: function getWidth() {
-          return Flow.SLASH_NOTEHEAD_WIDTH;
-        },
-        position: 'B/4'
-      }
-    }
+        getWidth: () => Flow.SLASH_NOTEHEAD_WIDTH,
+        position: 'B/4',
+      },
+    },
   },
   '128': {
     common: {
       beam_count: 5,
-      getWidth: function getWidth() {
-        var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Flow.DEFAULT_NOTATION_FONT_SCALE;
-
-        return new _glyph.Glyph(this.code_head || 'vb', scale).getMetrics().width;
+      getWidth(scale = Flow.DEFAULT_NOTATION_FONT_SCALE) {
+        return new Glyph(this.code_head || 'vb', scale).getMetrics().width;
       },
-
       stem: true,
       stem_offset: 0,
       flag: true,
@@ -1025,19 +963,19 @@ Flow.durationToGlyph.duration_codes = {
       tabnote_stem_down_extension: 18,
       dot_shiftY: 0,
       line_above: 0,
-      line_below: 0
+      line_below: 0,
     },
     type: {
-      'n': { // Hundred-twenty-eight note
-        code_head: 'vb'
+      'n': {  // Hundred-twenty-eight note
+        code_head: 'vb',
       },
       'h': { // Hundred-twenty-eight harmonic
-        code_head: 'v22'
+        code_head: 'v22',
       },
       'm': { // Hundred-twenty-eight muted
-        code_head: 'v3e'
+        code_head: 'v3e',
       },
-      'r': { // Hundred-twenty-eight rest
+      'r': {  // Hundred-twenty-eight rest
         code_head: 'vaa',
         stem: false,
         flag: false,
@@ -1045,23 +983,21 @@ Flow.durationToGlyph.duration_codes = {
         position: 'B/4',
         dot_shiftY: 1.5,
         line_above: 3.0,
-        line_below: 3.0
+        line_below: 3.0,
       },
       's': { // Hundred-twenty-eight rest
-        // Drawn with canvas primitives
-        getWidth: function getWidth() {
-          return Flow.SLASH_NOTEHEAD_WIDTH;
-        },
-        position: 'B/4'
-      }
-    }
-  }
+              // Drawn with canvas primitives
+        getWidth: () => Flow.SLASH_NOTEHEAD_WIDTH,
+        position: 'B/4',
+      },
+    },
+  },
 };
 
 // Some defaults
 Flow.TIME4_4 = {
   num_beats: 4,
   beat_value: 4,
-  resolution: Flow.RESOLUTION
+  resolution: Flow.RESOLUTION,
 };
-exports.Flow = Flow;
+export { Flow };

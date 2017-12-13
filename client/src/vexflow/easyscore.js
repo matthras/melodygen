@@ -1,593 +1,364 @@
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.EasyScore = exports.X = undefined;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
+// [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
 //
 // This class implements a parser for a simple language to generate
 // VexFlow objects.
 
-var _vex = require('./vex');
-
-var _stavenote = require('./stavenote');
-
-var _parser = require('./parser');
-
-var _articulation = require('./articulation');
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+import { Vex } from './vex';
+import { StaveNote } from './stavenote';
+import { Parser } from './parser';
+import { Articulation } from './articulation';
 
 // To enable logging for this class. Set `Vex.Flow.EasyScore.DEBUG` to `true`.
-function L() {
-  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-    args[_key] = arguments[_key];
-  }
+function L(...args) { if (EasyScore.DEBUG) Vex.L('Vex.Flow.EasyScore', args); }
 
-  if (EasyScore.DEBUG) _vex.Vex.L('Vex.Flow.EasyScore', args);
-}
+export const X = Vex.MakeException('EasyScoreError');
 
-var X = exports.X = _vex.Vex.MakeException('EasyScoreError');
-
-var Grammar = function () {
-  function Grammar(builder) {
-    _classCallCheck(this, Grammar);
-
+class Grammar {
+  constructor(builder) {
     this.builder = builder;
   }
 
-  _createClass(Grammar, [{
-    key: 'begin',
-    value: function begin() {
-      return this.LINE;
-    }
-  }, {
-    key: 'LINE',
-    value: function LINE() {
-      return {
-        expect: [this.PIECE, this.PIECES, this.EOL]
-      };
-    }
-  }, {
-    key: 'PIECE',
-    value: function PIECE() {
-      var _this = this;
+  begin() { return this.LINE; }
 
-      return {
-        expect: [this.CHORDORNOTE, this.PARAMS],
-        run: function run() {
-          return _this.builder.commitPiece();
-        }
-      };
-    }
-  }, {
-    key: 'PIECES',
-    value: function PIECES() {
-      return {
-        expect: [this.COMMA, this.PIECE],
-        zeroOrMore: true
-      };
-    }
-  }, {
-    key: 'PARAMS',
-    value: function PARAMS() {
-      return {
-        expect: [this.DURATION, this.TYPE, this.DOTS, this.OPTS]
-      };
-    }
-  }, {
-    key: 'CHORDORNOTE',
-    value: function CHORDORNOTE() {
-      return {
-        expect: [this.CHORD, this.SINGLENOTE],
-        or: true
-      };
-    }
-  }, {
-    key: 'CHORD',
-    value: function CHORD() {
-      var _this2 = this;
+  LINE() {
+    return {
+      expect: [this.PIECE, this.PIECES, this.EOL],
+    };
+  }
+  PIECE() {
+    return {
+      expect: [this.CHORDORNOTE, this.PARAMS],
+      run: () => this.builder.commitPiece(),
+    };
+  }
+  PIECES() {
+    return {
+      expect: [this.COMMA, this.PIECE],
+      zeroOrMore: true,
+    };
+  }
+  PARAMS() {
+    return {
+      expect: [this.DURATION, this.TYPE, this.DOTS, this.OPTS],
+    };
+  }
+  CHORDORNOTE() {
+    return {
+      expect: [this.CHORD, this.SINGLENOTE],
+      or: true,
+    };
+  }
+  CHORD() {
+    return {
+      expect: [this.LPAREN, this.NOTES, this.RPAREN],
+      run: (state) => this.builder.addChord(state.matches[1]),
+    };
+  }
+  NOTES() {
+    return {
+      expect: [this.NOTE],
+      oneOrMore: true,
+    };
+  }
+  NOTE() {
+    return {
+      expect: [this.NOTENAME, this.ACCIDENTAL, this.OCTAVE],
+    };
+  }
+  SINGLENOTE() {
+    return {
+      expect: [this.NOTENAME, this.ACCIDENTAL, this.OCTAVE],
+      run: (state) =>
+        this.builder.addSingleNote(state.matches[0], state.matches[1], state.matches[2]),
+    };
+  }
+  ACCIDENTAL() {
+    return {
+      expect: [this.ACCIDENTALS],
+      maybe: true,
+    };
+  }
+  DOTS() {
+    return {
+      expect: [this.DOT],
+      zeroOrMore: true,
+      run: (state) => this.builder.setNoteDots(state.matches[0]),
+    };
+  }
+  TYPE() {
+    return {
+      expect: [this.SLASH, this.MAYBESLASH, this.TYPES],
+      maybe: true,
+      run: (state) => this.builder.setNoteType(state.matches[2]),
+    };
+  }
+  DURATION() {
+    return {
+      expect: [this.SLASH, this.DURATIONS],
+      maybe: true,
+      run: (state) => this.builder.setNoteDuration(state.matches[1]),
+    };
+  }
+  OPTS() {
+    return {
+      expect: [this.LBRACKET, this.KEYVAL, this.KEYVALS, this.RBRACKET],
+      maybe: true,
+    };
+  }
+  KEYVALS() {
+    return {
+      expect: [this.COMMA, this.KEYVAL],
+      zeroOrMore: true,
+    };
+  }
+  KEYVAL() {
+    const unquote = (str) => str.slice(1, -1);
 
-      return {
-        expect: [this.LPAREN, this.NOTES, this.RPAREN],
-        run: function run(state) {
-          return _this2.builder.addChord(state.matches[1]);
-        }
-      };
-    }
-  }, {
-    key: 'NOTES',
-    value: function NOTES() {
-      return {
-        expect: [this.NOTE],
-        oneOrMore: true
-      };
-    }
-  }, {
-    key: 'NOTE',
-    value: function NOTE() {
-      return {
-        expect: [this.NOTENAME, this.ACCIDENTAL, this.OCTAVE]
-      };
-    }
-  }, {
-    key: 'SINGLENOTE',
-    value: function SINGLENOTE() {
-      var _this3 = this;
+    return {
+      expect: [this.KEY, this.EQUALS, this.VAL],
+      run: (state) => this.builder.addNoteOption(state.matches[0], unquote(state.matches[2])),
+    };
+  }
+  VAL()  {
+    return {
+      expect: [this.SVAL, this.DVAL],
+      or: true,
+    };
+  }
 
-      return {
-        expect: [this.NOTENAME, this.ACCIDENTAL, this.OCTAVE],
-        run: function run(state) {
-          return _this3.builder.addSingleNote(state.matches[0], state.matches[1], state.matches[2]);
-        }
-      };
-    }
-  }, {
-    key: 'ACCIDENTAL',
-    value: function ACCIDENTAL() {
-      return {
-        expect: [this.ACCIDENTALS],
-        maybe: true
-      };
-    }
-  }, {
-    key: 'DOTS',
-    value: function DOTS() {
-      var _this4 = this;
+  KEY()         { return { token: '[a-zA-Z][a-zA-Z0-9]*' }; }
+  DVAL()        { return { token: '["][^"]*["]' }; }
+  SVAL()        { return { token: "['][^']*[']" }; }
+  NOTENAME()    { return { token: '[a-gA-G]' }; }
+  OCTAVE()      { return { token: '[0-9]+' }; }
+  ACCIDENTALS() { return { token: 'bbs|bb|bss|bs|b|db|d|##|#|n|\\+\\+-|\\+-|\\+\\+|\\+|k|o' }; }
+  DURATIONS()   { return { token: '[0-9whq]+' }; }
+  TYPES()       { return { token: '[rRsSxX]' }; }
+  LPAREN()      { return { token: '[(]' }; }
+  RPAREN()      { return { token: '[)]' }; }
+  COMMA()       { return { token: '[,]' }; }
+  DOT()         { return { token: '[.]' }; }
+  SLASH()       { return { token: '[/]' }; }
+  MAYBESLASH()  { return { token: '[/]?' }; }
+  EQUALS()      { return { token: '[=]' }; }
+  LBRACKET()    { return { token: '\\[' }; }
+  RBRACKET()    { return { token: '\\]' }; }
+  EOL()         { return { token: '$' }; }
+}
 
-      return {
-        expect: [this.DOT],
-        zeroOrMore: true,
-        run: function run(state) {
-          return _this4.builder.setNoteDots(state.matches[0]);
-        }
-      };
-    }
-  }, {
-    key: 'TYPE',
-    value: function TYPE() {
-      var _this5 = this;
-
-      return {
-        expect: [this.SLASH, this.MAYBESLASH, this.TYPES],
-        maybe: true,
-        run: function run(state) {
-          return _this5.builder.setNoteType(state.matches[2]);
-        }
-      };
-    }
-  }, {
-    key: 'DURATION',
-    value: function DURATION() {
-      var _this6 = this;
-
-      return {
-        expect: [this.SLASH, this.DURATIONS],
-        maybe: true,
-        run: function run(state) {
-          return _this6.builder.setNoteDuration(state.matches[1]);
-        }
-      };
-    }
-  }, {
-    key: 'OPTS',
-    value: function OPTS() {
-      return {
-        expect: [this.LBRACKET, this.KEYVAL, this.KEYVALS, this.RBRACKET],
-        maybe: true
-      };
-    }
-  }, {
-    key: 'KEYVALS',
-    value: function KEYVALS() {
-      return {
-        expect: [this.COMMA, this.KEYVAL],
-        zeroOrMore: true
-      };
-    }
-  }, {
-    key: 'KEYVAL',
-    value: function KEYVAL() {
-      var _this7 = this;
-
-      var unquote = function unquote(str) {
-        return str.slice(1, -1);
-      };
-
-      return {
-        expect: [this.KEY, this.EQUALS, this.VAL],
-        run: function run(state) {
-          return _this7.builder.addNoteOption(state.matches[0], unquote(state.matches[2]));
-        }
-      };
-    }
-  }, {
-    key: 'VAL',
-    value: function VAL() {
-      return {
-        expect: [this.SVAL, this.DVAL],
-        or: true
-      };
-    }
-  }, {
-    key: 'KEY',
-    value: function KEY() {
-      return { token: '[a-zA-Z][a-zA-Z0-9]*' };
-    }
-  }, {
-    key: 'DVAL',
-    value: function DVAL() {
-      return { token: '["][^"]*["]' };
-    }
-  }, {
-    key: 'SVAL',
-    value: function SVAL() {
-      return { token: "['][^']*[']" };
-    }
-  }, {
-    key: 'NOTENAME',
-    value: function NOTENAME() {
-      return { token: '[a-gA-G]' };
-    }
-  }, {
-    key: 'OCTAVE',
-    value: function OCTAVE() {
-      return { token: '[0-9]+' };
-    }
-  }, {
-    key: 'ACCIDENTALS',
-    value: function ACCIDENTALS() {
-      return { token: 'bbs|bb|bss|bs|b|db|d|##|#|n|\\+\\+-|\\+-|\\+\\+|\\+|k|o' };
-    }
-  }, {
-    key: 'DURATIONS',
-    value: function DURATIONS() {
-      return { token: '[0-9whq]+' };
-    }
-  }, {
-    key: 'TYPES',
-    value: function TYPES() {
-      return { token: '[rRsSxX]' };
-    }
-  }, {
-    key: 'LPAREN',
-    value: function LPAREN() {
-      return { token: '[(]' };
-    }
-  }, {
-    key: 'RPAREN',
-    value: function RPAREN() {
-      return { token: '[)]' };
-    }
-  }, {
-    key: 'COMMA',
-    value: function COMMA() {
-      return { token: '[,]' };
-    }
-  }, {
-    key: 'DOT',
-    value: function DOT() {
-      return { token: '[.]' };
-    }
-  }, {
-    key: 'SLASH',
-    value: function SLASH() {
-      return { token: '[/]' };
-    }
-  }, {
-    key: 'MAYBESLASH',
-    value: function MAYBESLASH() {
-      return { token: '[/]?' };
-    }
-  }, {
-    key: 'EQUALS',
-    value: function EQUALS() {
-      return { token: '[=]' };
-    }
-  }, {
-    key: 'LBRACKET',
-    value: function LBRACKET() {
-      return { token: '\\[' };
-    }
-  }, {
-    key: 'RBRACKET',
-    value: function RBRACKET() {
-      return { token: '\\]' };
-    }
-  }, {
-    key: 'EOL',
-    value: function EOL() {
-      return { token: '$' };
-    }
-  }]);
-
-  return Grammar;
-}();
-
-var Builder = function () {
-  function Builder(factory) {
-    _classCallCheck(this, Builder);
-
+class Builder {
+  constructor(factory) {
     this.factory = factory;
     this.commitHooks = [];
     this.reset();
   }
 
-  _createClass(Builder, [{
-    key: 'reset',
-    value: function reset() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  reset(options = {}) {
+    this.options = {
+      stem: 'auto',
+      clef: 'treble',
+    };
+    this.elements = {
+      notes: [],
+      accidentals: [],
+    };
+    this.rollingDuration = '8';
+    this.resetPiece();
+    Object.assign(this.options, options);
+  }
 
-      this.options = {
-        stem: 'auto',
-        clef: 'treble'
-      };
-      this.elements = {
-        notes: [],
-        accidentals: []
-      };
-      this.rollingDuration = '8';
-      this.resetPiece();
-      Object.assign(this.options, options);
-    }
-  }, {
-    key: 'getFactory',
-    value: function getFactory() {
-      return this.factory;
-    }
-  }, {
-    key: 'getElements',
-    value: function getElements() {
-      return this.elements;
-    }
-  }, {
-    key: 'addCommitHook',
-    value: function addCommitHook(commitHook) {
-      this.commitHooks.push(commitHook);
-    }
-  }, {
-    key: 'resetPiece',
-    value: function resetPiece() {
-      L('resetPiece');
-      this.piece = {
-        chord: [],
-        duration: this.rollingDuration,
-        dots: 0,
-        type: undefined,
-        options: {}
-      };
-    }
-  }, {
-    key: 'setNoteDots',
-    value: function setNoteDots(dots) {
-      L('setNoteDots:', dots);
-      if (dots) this.piece.dots = dots.length;
-    }
-  }, {
-    key: 'setNoteDuration',
-    value: function setNoteDuration(duration) {
-      L('setNoteDuration:', duration);
-      this.rollingDuration = this.piece.duration = duration || this.rollingDuration;
-    }
-  }, {
-    key: 'setNoteType',
-    value: function setNoteType(type) {
-      L('setNoteType:', type);
-      if (type) this.piece.type = type;
-    }
-  }, {
-    key: 'addNoteOption',
-    value: function addNoteOption(key, value) {
-      L('addNoteOption: key:', key, 'value:', value);
-      this.piece.options[key] = value;
-    }
-  }, {
-    key: 'addNote',
-    value: function addNote(key, accid, octave) {
-      L('addNote:', key, accid, octave);
-      this.piece.chord.push({ key: key, accid: accid, octave: octave });
-    }
-  }, {
-    key: 'addSingleNote',
-    value: function addSingleNote(key, accid, octave) {
-      L('addSingleNote:', key, accid, octave);
-      this.addNote(key, accid, octave);
-    }
-  }, {
-    key: 'addChord',
-    value: function addChord(notes) {
-      var _this8 = this;
+  getFactory() { return this.factory; }
 
-      L('startChord');
-      if (_typeof(notes[0]) !== 'object') {
-        this.addSingleNote(notes[0]);
-      } else {
-        notes.forEach(function (n) {
-          if (n) _this8.addNote.apply(_this8, _toConsumableArray(n));
-        });
-      }
-      L('endChord');
-    }
-  }, {
-    key: 'commitPiece',
-    value: function commitPiece() {
-      var _this9 = this;
+  getElements() { return this.elements; }
 
-      L('commitPiece');
-      var factory = this.factory;
+  addCommitHook(commitHook) {
+    this.commitHooks.push(commitHook);
+  }
 
+  resetPiece() {
+    L('resetPiece');
+    this.piece = {
+      chord: [],
+      duration: this.rollingDuration,
+      dots: 0,
+      type: undefined,
+      options: {},
+    };
+  }
 
-      if (!factory) return;
+  setNoteDots(dots) {
+    L('setNoteDots:', dots);
+    if (dots) this.piece.dots = dots.length;
+  }
 
-      var options = Object.assign({}, this.options, this.piece.options);
-      var stem = options.stem,
-          clef = options.clef;
+  setNoteDuration(duration) {
+    L('setNoteDuration:', duration);
+    this.rollingDuration = this.piece.duration = duration || this.rollingDuration;
+  }
 
-      var autoStem = stem.toLowerCase() === 'auto';
-      var stemDirection = !autoStem && stem.toLowerCase() === 'up' ? _stavenote.StaveNote.STEM_UP : _stavenote.StaveNote.STEM_DOWN;
+  setNoteType(type) {
+    L('setNoteType:', type);
+    if (type) this.piece.type = type;
+  }
 
-      // Build StaveNotes.
-      var _piece = this.piece,
-          chord = _piece.chord,
-          duration = _piece.duration,
-          dots = _piece.dots,
-          type = _piece.type;
+  addNoteOption(key, value) {
+    L('addNoteOption: key:', key, 'value:', value);
+    this.piece.options[key] = value;
+  }
 
-      var keys = chord.map(function (note) {
-        return note.key + '/' + note.octave;
+  addNote(key, accid, octave) {
+    L('addNote:', key, accid, octave);
+    this.piece.chord.push({ key, accid, octave });
+  }
+
+  addSingleNote(key, accid, octave) {
+    L('addSingleNote:', key, accid, octave);
+    this.addNote(key, accid, octave);
+  }
+
+  addChord(notes) {
+    L('startChord');
+    if (typeof(notes[0]) !== 'object') {
+      this.addSingleNote(notes[0]);
+    } else {
+      notes.forEach(n => {
+        if (n) this.addNote(...n);
       });
-      var note = factory.StaveNote({
-        keys: keys,
-        duration: duration,
-        dots: dots,
-        type: type,
-        clef: clef,
-        auto_stem: autoStem
-      });
-      if (!autoStem) note.setStemDirection(stemDirection);
-
-      // Attach accidentals.
-      var accids = chord.map(function (note) {
-        return note.accid || null;
-      });
-      accids.forEach(function (accid, i) {
-        if (accid) note.addAccidental(i, factory.Accidental({ type: accid }));
-      });
-
-      // Attach dots.
-      for (var i = 0; i < dots; i++) {
-        note.addDotToAll();
-      }this.commitHooks.forEach(function (fn) {
-        return fn(options, note, _this9);
-      });
-
-      this.elements.notes.push(note);
-      this.elements.accidentals.concat(accids);
-      this.resetPiece();
     }
-  }]);
+    L('endChord');
+  }
 
-  return Builder;
-}();
+  commitPiece() {
+    L('commitPiece');
+    const { factory } = this;
 
-function setId(_ref, note) {
-  var id = _ref.id;
+    if (!factory) return;
 
+    const options = Object.assign({}, this.options, this.piece.options);
+    const { stem, clef } = options;
+    const autoStem = stem.toLowerCase() === 'auto';
+    const stemDirection = !autoStem && stem.toLowerCase() === 'up'
+      ? StaveNote.STEM_UP
+      : StaveNote.STEM_DOWN;
+
+    // Build StaveNotes.
+    const { chord, duration, dots, type } = this.piece;
+    const keys = chord.map(note => note.key + '/' + note.octave);
+    const note = factory.StaveNote({
+      keys,
+      duration,
+      dots,
+      type,
+      clef,
+      auto_stem: autoStem,
+    });
+    if (!autoStem) note.setStemDirection(stemDirection);
+
+    // Attach accidentals.
+    const accids = chord.map(note => note.accid || null);
+    accids.forEach((accid, i) => {
+      if (accid) note.addAccidental(i, factory.Accidental({ type: accid }));
+    });
+
+    // Attach dots.
+    for (let i = 0; i < dots; i++) note.addDotToAll();
+
+    this.commitHooks.forEach(fn => fn(options, note, this));
+
+    this.elements.notes.push(note);
+    this.elements.accidentals.concat(accids);
+    this.resetPiece();
+  }
+}
+
+function setId({ id }, note) {
   if (id === undefined) return;
 
   note.setAttribute('id', id);
 }
 
+
 function setClass(options, note) {
   if (!options.class) return;
 
-  var commaSeparatedRegex = /\s*,\s*/;
+  const commaSeparatedRegex = /\s*,\s*/;
 
-  options.class.split(commaSeparatedRegex).forEach(function (className) {
-    return note.addClass(className);
-  });
+  options.class
+    .split(commaSeparatedRegex)
+    .forEach(className => note.addClass(className));
 }
 
-var EasyScore = exports.EasyScore = function () {
-  function EasyScore() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    _classCallCheck(this, EasyScore);
-
+export class EasyScore {
+  constructor(options = {}) {
     this.setOptions(options);
     this.defaults = {
       clef: 'treble',
       time: '4/4',
-      stem: 'auto'
+      stem: 'auto',
     };
   }
 
-  _createClass(EasyScore, [{
-    key: 'set',
-    value: function set(defaults) {
-      Object.assign(this.defaults, defaults);
-      return this;
-    }
-  }, {
-    key: 'setOptions',
-    value: function setOptions(options) {
-      var _this10 = this;
+  set(defaults) {
+    Object.assign(this.defaults, defaults);
+    return this;
+  }
 
-      this.options = Object.assign({
-        factory: null,
-        builder: null,
-        commitHooks: [setId, setClass, _articulation.Articulation.easyScoreHook],
-        throwOnError: false
-      }, options);
+  setOptions(options) {
+    this.options = Object.assign({
+      factory: null,
+      builder: null,
+      commitHooks: [
+        setId,
+        setClass,
+        Articulation.easyScoreHook,
+      ],
+      throwOnError: false,
+    }, options);
 
-      this.factory = this.options.factory;
-      this.builder = this.options.builder || new Builder(this.factory);
-      this.grammar = new Grammar(this.builder);
-      this.parser = new _parser.Parser(this.grammar);
-      this.options.commitHooks.forEach(function (commitHook) {
-        return _this10.addCommitHook(commitHook);
-      });
-      return this;
-    }
-  }, {
-    key: 'setContext',
-    value: function setContext(context) {
-      if (this.factory) this.factory.setContext(context);
-      return this;
-    }
-  }, {
-    key: 'parse',
-    value: function parse(line) {
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    this.factory = this.options.factory;
+    this.builder = this.options.builder || new Builder(this.factory);
+    this.grammar = new Grammar(this.builder);
+    this.parser = new Parser(this.grammar);
+    this.options.commitHooks.forEach(commitHook => this.addCommitHook(commitHook));
+    return this;
+  }
 
-      this.builder.reset(options);
-      var result = this.parser.parse(line);
-      if (!result.success && this.options.throwOnError) {
-        throw new X('Error parsing line: ' + line, result);
-      }
-      return result;
-    }
-  }, {
-    key: 'beam',
-    value: function beam(notes) {
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  setContext(context) {
+    if (this.factory) this.factory.setContext(context);
+    return this;
+  }
 
-      this.factory.Beam({ notes: notes, options: options });
-      return notes;
+  parse(line, options = {}) {
+    this.builder.reset(options);
+    const result = this.parser.parse(line);
+    if (!result.success && this.options.throwOnError) {
+      throw new X('Error parsing line: ' + line, result);
     }
-  }, {
-    key: 'tuplet',
-    value: function tuplet(notes) {
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    return result;
+  }
 
-      this.factory.Tuplet({ notes: notes, options: options });
-      return notes;
-    }
-  }, {
-    key: 'notes',
-    value: function notes(line) {
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  beam(notes, options = {}) {
+    this.factory.Beam({ notes, options });
+    return notes;
+  }
 
-      options = Object.assign({ clef: this.defaults.clef, stem: this.defaults.stem }, options);
-      this.parse(line, options);
-      return this.builder.getElements().notes;
-    }
-  }, {
-    key: 'voice',
-    value: function voice(notes, voiceOptions) {
-      voiceOptions = Object.assign({ time: this.defaults.time }, voiceOptions);
-      return this.factory.Voice(voiceOptions).addTickables(notes);
-    }
-  }, {
-    key: 'addCommitHook',
-    value: function addCommitHook(commitHook) {
-      return this.builder.addCommitHook(commitHook);
-    }
-  }]);
+  tuplet(notes, options = {}) {
+    this.factory.Tuplet({ notes, options });
+    return notes;
+  }
 
-  return EasyScore;
-}();
+  notes(line, options = {}) {
+    options = Object.assign({ clef: this.defaults.clef, stem: this.defaults.stem }, options);
+    this.parse(line, options);
+    return this.builder.getElements().notes;
+  }
+
+  voice(notes, voiceOptions) {
+    voiceOptions = Object.assign({ time: this.defaults.time }, voiceOptions);
+    return this.factory.Voice(voiceOptions).addTickables(notes);
+  }
+
+  addCommitHook(commitHook) {
+    return this.builder.addCommitHook(commitHook);
+  }
+}

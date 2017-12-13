@@ -1,60 +1,37 @@
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Curve = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _vex = require('./vex');
-
-var _element = require('./element');
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // VexFlow - Music Engraving for HTML5
+// VexFlow - Music Engraving for HTML5
 // Copyright Mohit Muthanna 2010
 //
 // This class implements curves (for slurs)
 
-var Curve = exports.Curve = function (_Element) {
-  _inherits(Curve, _Element);
+import { Vex } from './vex';
+import { Element } from './element';
 
-  _createClass(Curve, null, [{
-    key: 'Position',
-    get: function get() {
-      return {
-        NEAR_HEAD: 1,
-        NEAR_TOP: 2
-      };
-    }
-  }, {
-    key: 'PositionString',
-    get: function get() {
-      return {
-        nearHead: Curve.Position.NEAR_HEAD,
-        nearTop: Curve.Position.NEAR_TOP
-      };
-    }
+export class Curve extends Element {
+  static get Position() {
+    return {
+      NEAR_HEAD: 1,
+      NEAR_TOP: 2,
+    };
+  }
 
-    // from: Start note
-    // to: End note
-    // options:
-    //    cps: List of control points
-    //    x_shift: pixels to shift
-    //    y_shift: pixels to shift
+  static get PositionString() {
+    return {
+      nearHead: Curve.Position.NEAR_HEAD,
+      nearTop: Curve.Position.NEAR_TOP,
+    };
+  }
 
-  }]);
+  // from: Start note
+  // to: End note
+  // options:
+  //    cps: List of control points
+  //    x_shift: pixels to shift
+  //    y_shift: pixels to shift
+  constructor(from, to, options) {
+    super();
+    this.setAttribute('type', 'Curve');
 
-  function Curve(from, to, options) {
-    _classCallCheck(this, Curve);
-
-    var _this = _possibleConstructorReturn(this, (Curve.__proto__ || Object.getPrototypeOf(Curve)).call(this));
-
-    _this.setAttribute('type', 'Curve');
-
-    _this.render_options = {
+    this.render_options = {
       spacing: 2,
       thickness: 2,
       x_shift: 0,
@@ -62,122 +39,129 @@ var Curve = exports.Curve = function (_Element) {
       position: Curve.Position.NEAR_HEAD,
       position_end: Curve.Position.NEAR_HEAD,
       invert: false,
-      cps: [{ x: 0, y: 10 }, { x: 0, y: 10 }]
+      cps: [{ x: 0, y: 10 }, { x: 0, y: 10 }],
     };
 
-    _vex.Vex.Merge(_this.render_options, options);
-    _this.setNotes(from, to);
-    return _this;
+    Vex.Merge(this.render_options, options);
+    this.setNotes(from, to);
   }
 
-  _createClass(Curve, [{
-    key: 'setNotes',
-    value: function setNotes(from, to) {
-      if (!from && !to) {
-        throw new _vex.Vex.RuntimeError('BadArguments', 'Curve needs to have either first_note or last_note set.');
-      }
-
-      this.from = from;
-      this.to = to;
-      return this;
+  setNotes(from, to) {
+    if (!from && !to) {
+      throw new Vex.RuntimeError(
+        'BadArguments', 'Curve needs to have either first_note or last_note set.'
+      );
     }
 
-    /**
-     * @return {boolean} Returns true if this is a partial bar.
-     */
+    this.from = from;
+    this.to = to;
+    return this;
+  }
 
-  }, {
-    key: 'isPartial',
-    value: function isPartial() {
-      return !this.from || !this.to;
+  /**
+   * @return {boolean} Returns true if this is a partial bar.
+   */
+  isPartial() {
+    return (!this.from || !this.to);
+  }
+
+  renderCurve(params) {
+    const ctx = this.context;
+    const cps = this.render_options.cps;
+
+    const x_shift = this.render_options.x_shift;
+    const y_shift = this.render_options.y_shift * params.direction;
+
+    const first_x = params.first_x + x_shift;
+    const first_y = params.first_y + y_shift;
+    const last_x = params.last_x - x_shift;
+    const last_y = params.last_y + y_shift;
+    const thickness = this.render_options.thickness;
+
+    const cp_spacing = (last_x - first_x) / (cps.length + 2);
+
+    ctx.beginPath();
+    ctx.moveTo(first_x, first_y);
+    ctx.bezierCurveTo(
+      first_x + cp_spacing + cps[0].x,
+      first_y + (cps[0].y * params.direction),
+      last_x - cp_spacing + cps[1].x,
+      last_y + (cps[1].y * params.direction),
+      last_x,
+      last_y
+    );
+    ctx.bezierCurveTo(
+      last_x - cp_spacing + cps[1].x,
+      last_y + ((cps[1].y + thickness) * params.direction),
+      first_x + cp_spacing + cps[0].x,
+      first_y + ((cps[0].y + thickness) * params.direction),
+      first_x,
+      first_y
+    );
+    ctx.stroke();
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  draw() {
+    this.checkContext();
+    this.setRendered();
+
+    const first_note = this.from;
+    const last_note = this.to;
+    let first_x;
+    let last_x;
+    let first_y;
+    let last_y;
+    let stem_direction;
+
+    let metric = 'baseY';
+    let end_metric = 'baseY';
+
+    function getPosition(position) {
+      return typeof(position) === 'string'
+        ? Curve.PositionString[position]
+        : position;
     }
-  }, {
-    key: 'renderCurve',
-    value: function renderCurve(params) {
-      var ctx = this.context;
-      var cps = this.render_options.cps;
+    const position = getPosition(this.render_options.position);
+    const position_end = getPosition(this.render_options.position_end);
 
-      var x_shift = this.render_options.x_shift;
-      var y_shift = this.render_options.y_shift * params.direction;
-
-      var first_x = params.first_x + x_shift;
-      var first_y = params.first_y + y_shift;
-      var last_x = params.last_x - x_shift;
-      var last_y = params.last_y + y_shift;
-      var thickness = this.render_options.thickness;
-
-      var cp_spacing = (last_x - first_x) / (cps.length + 2);
-
-      ctx.beginPath();
-      ctx.moveTo(first_x, first_y);
-      ctx.bezierCurveTo(first_x + cp_spacing + cps[0].x, first_y + cps[0].y * params.direction, last_x - cp_spacing + cps[1].x, last_y + cps[1].y * params.direction, last_x, last_y);
-      ctx.bezierCurveTo(last_x - cp_spacing + cps[1].x, last_y + (cps[1].y + thickness) * params.direction, first_x + cp_spacing + cps[0].x, first_y + (cps[0].y + thickness) * params.direction, first_x, first_y);
-      ctx.stroke();
-      ctx.closePath();
-      ctx.fill();
+    if (position === Curve.Position.NEAR_TOP) {
+      metric = 'topY';
+      end_metric = 'topY';
     }
-  }, {
-    key: 'draw',
-    value: function draw() {
-      this.checkContext();
-      this.setRendered();
 
-      var first_note = this.from;
-      var last_note = this.to;
-      var first_x = void 0;
-      var last_x = void 0;
-      var first_y = void 0;
-      var last_y = void 0;
-      var stem_direction = void 0;
-
-      var metric = 'baseY';
-      var end_metric = 'baseY';
-
-      function getPosition(position) {
-        return typeof position === 'string' ? Curve.PositionString[position] : position;
-      }
-      var position = getPosition(this.render_options.position);
-      var position_end = getPosition(this.render_options.position_end);
-
-      if (position === Curve.Position.NEAR_TOP) {
-        metric = 'topY';
-        end_metric = 'topY';
-      }
-
-      if (position_end === Curve.Position.NEAR_HEAD) {
-        end_metric = 'baseY';
-      } else if (position_end === Curve.Position.NEAR_TOP) {
-        end_metric = 'topY';
-      }
-
-      if (first_note) {
-        first_x = first_note.getTieRightX();
-        stem_direction = first_note.getStemDirection();
-        first_y = first_note.getStemExtents()[metric];
-      } else {
-        first_x = last_note.getStave().getTieStartX();
-        first_y = last_note.getStemExtents()[metric];
-      }
-
-      if (last_note) {
-        last_x = last_note.getTieLeftX();
-        stem_direction = last_note.getStemDirection();
-        last_y = last_note.getStemExtents()[end_metric];
-      } else {
-        last_x = first_note.getStave().getTieEndX();
-        last_y = first_note.getStemExtents()[end_metric];
-      }
-
-      this.renderCurve({
-        first_x: first_x,
-        last_x: last_x,
-        first_y: first_y,
-        last_y: last_y,
-        direction: stem_direction * (this.render_options.invert === true ? -1 : 1)
-      });
-      return true;
+    if (position_end === Curve.Position.NEAR_HEAD) {
+      end_metric = 'baseY';
+    } else if (position_end === Curve.Position.NEAR_TOP) {
+      end_metric = 'topY';
     }
-  }]);
 
-  return Curve;
-}(_element.Element);
+    if (first_note) {
+      first_x = first_note.getTieRightX();
+      stem_direction = first_note.getStemDirection();
+      first_y = first_note.getStemExtents()[metric];
+    } else {
+      first_x = last_note.getStave().getTieStartX();
+      first_y = last_note.getStemExtents()[metric];
+    }
+
+    if (last_note) {
+      last_x = last_note.getTieLeftX();
+      stem_direction = last_note.getStemDirection();
+      last_y = last_note.getStemExtents()[end_metric];
+    } else {
+      last_x = first_note.getStave().getTieEndX();
+      last_y = first_note.getStemExtents()[end_metric];
+    }
+
+    this.renderCurve({
+      first_x,
+      last_x,
+      first_y,
+      last_y,
+      direction: stem_direction * (this.render_options.invert === true ? -1 : 1),
+    });
+    return true;
+  }
+}
