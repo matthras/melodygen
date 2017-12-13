@@ -29,4 +29,3 @@
  * Build ID: <%= BUILD_PREFIX %>@<%= BUILD_COMMIT %>
  * Build date: <%= BUILD_DATE %>
  */
-"use strict";
