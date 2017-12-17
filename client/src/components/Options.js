@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { MarkovChain } from './MarkovChain.js';
 import { KeySignatureOptions } from './KeySignatureOptions.js';
+import { PitchRangeOptions } from './PitchRangeOptions.js';
 
 class Options extends Component {
   constructor(props){
@@ -54,6 +55,9 @@ class Options extends Component {
         </div>
         <div className="four columns">
           <KeySignatureOptions />
+          <PitchRangeOptions 
+            fullPitchRange={this.props.fullPitchRange}
+          />
         </div>
       </div>
       <div className="row">

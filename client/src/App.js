@@ -201,6 +201,7 @@ class App extends Component {
             beatValueChange={this.beatValueChange}
             markovchainChange={this.markovchainChange}
             keySignatures={this.state.keySignatures}
+            fullPitchRange={this.state.fullPitchRange}
           />
       </div>
     );
