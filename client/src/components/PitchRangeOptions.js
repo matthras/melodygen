@@ -1,10 +1,20 @@
 import React, { Component } from 'react';
 
-function pitchRangeOptions(fullPitchRange, boundPitch, boundType) {
-  // if upper bound, slice from c/0 to bound
-  // if lower bound, slice from bound to end
-  const adjustedPitchRange = (boundType==='upper') ? fullPitchRange.slice(fullPitchRange.indexOf(boundPitch)) : fullPitchRange.slice(fullPitchRange.indexOf(boundPitch))
-  return adjustedPitchRange
+const PitchRangeBound = (props) => {
+  const { fullPitchRange, pitchBound, boundType } = props;
+  // if I adjust the upper bound, I still want to choose an upper bound, ranging from lower bound to end
+  // if I adjust the lower bound, I still want to choose a lower bound, ranging from start to upper bound
+  const adjustedPitchRange = (boundType==="upper") 
+    ? fullPitchRange.slice(0,fullPitchRange.indexOf(pitchBound)) 
+    : fullPitchRange.slice(fullPitchRange.indexOf(pitchBound))
+  const adjustedPitchRangeOptions = adjustedPitchRange.map( (pitch) => {
+    return(
+      <option value={pitch} key={pitch}>
+        {pitch}
+      </option>
+    )
+  });
+  return adjustedPitchRangeOptions
 }
 
 export class PitchRangeOptions extends Component {
@@ -12,11 +22,35 @@ export class PitchRangeOptions extends Component {
     super(props)
     this.state = {
       lowerBound: 'c/4',
-      upperBound: 'c/5'
+      upperBound: 'c/5',
+      pitchClasses: ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#','b'],
+      fullPitchRange: [] // Generated in componentWillMount()
     }
+    this.adjustLowerBound = this.adjustLowerBound.bind(this);
+    this.adjustUpperBound = this.adjustUpperBound.bind(this);
+  }
+  adjustLowerBound(event) {
+    this.setState({lowerBound: event.target.value})
+  }
+  adjustUpperBound(event) {
+    this.setState({upperBound: event.target.value})
+  }
+
+  componentWillMount() {
+    let fullPitchRange = [];
+    fullPitchRange.push('a/0');
+    fullPitchRange.push('a#/0');
+    fullPitchRange.push('b/0');
+    for(let p = 1; p < 8; p++){
+      for(let pc = 0; pc < this.state.pitchClasses.length; pc++){
+        fullPitchRange.push(this.state.pitchClasses[pc]+'/'+p);
+      }
+    }
+    fullPitchRange.push('c/8');
+    this.setState({fullPitchRange})
   }
   render() {
-    const fullPitchRangeOptions = this.props.fullPitchRange.map( (pitch) => {
+    const fullPitchRangeOptions = this.state.fullPitchRange.map( (pitch) => {
       return(
         <option value={pitch}>
           {pitch}
@@ -26,12 +60,12 @@ export class PitchRangeOptions extends Component {
     return (
      <div id="pitchRangeOptions">
       <b>Pitch Range</b> <br />
-      <select>
-        {fullPitchRangeOptions}
+      <select onChange={this.adjustLowerBound} value={this.state.lowerBound}>
+        <PitchRangeBound fullPitchRange={this.state.fullPitchRange} pitchBound={this.state.upperBound} boundType="upper" />
       </select>
       to
-      <select>
-        {fullPitchRangeOptions}
+      <select onChange={this.adjustUpperBound} value={this.state.upperBound}>
+        <PitchRangeBound fullPitchRange={this.state.fullPitchRange} pitchBound={this.state.lowerBound} boundType="lower" />
       </select>
      </div> 
     )
