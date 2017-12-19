@@ -21,19 +21,26 @@ export class PitchRangeOptions extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      lowerBound: 'c/4',
-      upperBound: 'c/5',
+      lowerPitch: 'c/4',
+      upperPitch: 'c/5',
       pitchClasses: ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#','b'],
-      fullPitchRange: [] // Generated in componentWillMount()
+      fullPitchRange: [], // Generated in componentWillMount()
+      workingPitchRange: []
     }
-    this.adjustLowerBound = this.adjustLowerBound.bind(this);
-    this.adjustUpperBound = this.adjustUpperBound.bind(this);
+    this.adjustlowerPitch = this.adjustlowerPitch.bind(this);
+    this.adjustupperPitch = this.adjustupperPitch.bind(this);
   }
-  adjustLowerBound(event) {
-    this.setState({lowerBound: event.target.value})
+  adjustlowerPitch(event) {
+    this.setState({lowerPitch: event.target.value})
   }
-  adjustUpperBound(event) {
-    this.setState({upperBound: event.target.value})
+  adjustupperPitch(event) {
+    this.setState({upperPitch: event.target.value})
+  }
+
+  generatePitchRange() {
+    const fullPitchRange = this.state.fullPitchRange;
+    const workingPitchRange = fullPitchRange.slice(fullPitchRange.indexOf(this.state.lowerPitch), fullPitchRange.indexOf(this.state.upperPitch)+1)
+    this.setState({workingPitchRange})
   }
 
   componentWillMount() {
@@ -60,12 +67,12 @@ export class PitchRangeOptions extends Component {
     return (
      <div id="pitchRangeOptions">
       <b>Pitch Range</b> <br />
-      <select onChange={this.adjustLowerBound} value={this.state.lowerBound}>
-        <PitchRangeBound fullPitchRange={this.state.fullPitchRange} pitchBound={this.state.upperBound} boundType="upper" />
+      <select onChange={this.adjustlowerPitch} value={this.state.lowerPitch}>
+        <PitchRangeBound fullPitchRange={this.state.fullPitchRange} pitchBound={this.state.upperPitch} boundType="upper" />
       </select>
       to
-      <select onChange={this.adjustUpperBound} value={this.state.upperBound}>
-        <PitchRangeBound fullPitchRange={this.state.fullPitchRange} pitchBound={this.state.lowerBound} boundType="lower" />
+      <select onChange={this.adjustupperPitch} value={this.state.upperPitch}>
+        <PitchRangeBound fullPitchRange={this.state.fullPitchRange} pitchBound={this.state.lowerPitch} boundType="lower" />
       </select>
      </div> 
     )

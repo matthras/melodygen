@@ -22,8 +22,6 @@ class App extends Component {
       noteLengthClasses: [1, 2, 4, 8, 16], // Whole note, minim, crotchet, quaver, semiquaver.
       // Initial Conditions
       workingPitchRange: ['c/4','d/4','e/4', 'f/4', 'g/4', 'a/4', 'b/4', 'c/5'],
-      workingpitchRangeBottom: 'c/4',
-      workingpitchRangeTop: 'c/5',
       markovChain: [
         [0.2, 0.3, 0.3, 0, 0.2, 0, 0, 0],
         [0.25, 0.25, 0.25, 0.25, 0, 0, 0, 0],
@@ -144,34 +142,6 @@ class App extends Component {
     });
   }
 
-  generatePitchRange(bottomPitch = 'a/0', topPitch = 'c/8') {
-    // Test: bottomPitch and topPitch MUST be in 'letter'/'number' form
-    if(this.state.fullPitchRange.length===0){
-      // Generate full pitch range A0 to C8 (88 key piano)
-      // A0 to C8, number starts on C e.g. A0, A#0, B0, C1, etc.
-      // This should only happen at the start in componentWillMount()
-      let fullPitchRange = [];
-      fullPitchRange.push('a/0');
-      fullPitchRange.push('a#/0');
-      fullPitchRange.push('b/0');
-      for(let p = 1; p < 8; p++){
-        for(let pc = 0; pc < this.state.pitchClasses.length; pc++){
-          fullPitchRange.push(this.state.pitchClasses[pc]+'/'+p);
-        }
-      }
-      fullPitchRange.push('c/8');
-      this.setState({fullPitchRange})
-    } else {
-      const fullPitchRange = this.state.fullPitchRange;
-      const workingPitchRange = fullPitchRange.slice(fullPitchRange.indexOf(bottomPitch), fullPitchRange.indexOf(topPitch)+1)
-      this.setState({workingPitchRange})
-    }
-  }
-
-  componentWillMount() {
-    this.generatePitchRange()
-  }
-
   render() {
     return (
       <div className="App container">
@@ -190,7 +160,6 @@ class App extends Component {
             preventRendering={this.preventRendering}
           />
           <Options  
-            workingPitchRange={this.state.workingPitchRange} 
             clef={this.state.clef}
             nBars={this.state.nBars}
             markovChain={this.state.markovChain}
