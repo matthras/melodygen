@@ -25,7 +25,6 @@ export class PitchRangeOptions extends Component {
       upperPitch: 'c/5',
       pitchClasses: ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#','b'],
       fullPitchRange: [], // Generated in componentWillMount()
-      workingPitchRange: []
     }
     this.adjustlowerPitch = this.adjustlowerPitch.bind(this);
     this.adjustupperPitch = this.adjustupperPitch.bind(this);
