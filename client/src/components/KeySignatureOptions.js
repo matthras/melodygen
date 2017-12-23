@@ -12,21 +12,21 @@ export class KeySignatureOptions extends Component{
   render() {
     const nSharpFlatsOptions = this.state.nSharpsFlats.map( (num) => {
       return (
-        <option value={num}>
+        <option value={num} key={num}>
           {(num < 0) ? Math.abs(num)+' flats' : num + ' sharps'} 
         </option>
       )
     })
     const majorOptions = this.state.majorKeys.map( (key) => {
       return (
-        <option value={key}>
+        <option value={key} key={key}>
           {key + ' major'}
         </option>
       )
     })
     const minorOptions = this.state.minorKeys.map( (key) => {
       return(
-        <option value={key}>
+        <option value={key} key={key}>
           {key + ' minor'}
         </option>
       )
