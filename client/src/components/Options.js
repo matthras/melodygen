@@ -57,6 +57,7 @@ class Options extends Component {
           <KeySignatureOptions />
           <PitchRangeOptions 
             fullPitchRange={this.props.fullPitchRange}
+            workingPitchRangeChange={this.props.workingPitchRangeChange}
           />
         </div>
       </div>

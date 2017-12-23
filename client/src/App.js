@@ -42,13 +42,13 @@ class App extends Component {
     this.getNextPitch = this.getNextPitch.bind(this);
     this.startingPitch = this.startingPitch.bind(this);
     this.preventRendering = this.preventRendering.bind(this);
-    this.generatePitchRange = this.generatePitchRange.bind(this);
     this.enharmonicEquivalent = this.enharmonicEquivalent.bind(this);
     // Change handlers for <Options>
     this.nBarsChange = this.nBarsChange.bind(this);
     this.nBeatsChange = this.nBeatsChange.bind(this);
     this.beatValueChange = this.beatValueChange.bind(this);
     this.markovchainChange = this.markovchainChange.bind(this);
+    this.workingPitchRangeChange = this.workingPitchRangeChange.bind(this);
   }
   preventRendering() {
     this.setState({renderNewScore: false})
@@ -73,6 +73,9 @@ class App extends Component {
   }
   beatValueChange(num) {
     this.setState({beatValue: num});
+  }
+  workingPitchRangeChange(workingPitchRange) {
+    this.setState({workingPitchRange});
   }
   markovchainChange(row, rowIndex) {
     let newMarkovChain = this.state.markovChain;
@@ -169,8 +172,10 @@ class App extends Component {
             nBeatsChange={this.nBeatsChange}
             beatValueChange={this.beatValueChange}
             markovchainChange={this.markovchainChange}
+            workingPitchRangeChange={this.workingPitchRangeChange}
             keySignatures={this.state.keySignatures}
             fullPitchRange={this.state.fullPitchRange}
+            workingPitchRange={this.state.workingPitchRange}
           />
       </div>
     );

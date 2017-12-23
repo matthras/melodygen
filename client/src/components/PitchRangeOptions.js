@@ -31,16 +31,18 @@ export class PitchRangeOptions extends Component {
     this.adjustupperPitch = this.adjustupperPitch.bind(this);
   }
   adjustlowerPitch(event) {
-    this.setState({lowerPitch: event.target.value})
+    const lowerPitch = event.target.value;
+    this.setState({lowerPitch})
+    const fullPitchRange = this.state.fullPitchRange;
+    const workingPitchRange = fullPitchRange.slice(fullPitchRange.indexOf(lowerPitch), fullPitchRange.indexOf(this.state.upperPitch)+1)
+    this.props.workingPitchRangeChange(workingPitchRange)
   }
   adjustupperPitch(event) {
-    this.setState({upperPitch: event.target.value})
-  }
-
-  generatePitchRange() {
+    const upperPitch = event.target.value;
+    this.setState({upperPitch})
     const fullPitchRange = this.state.fullPitchRange;
-    const workingPitchRange = fullPitchRange.slice(fullPitchRange.indexOf(this.state.lowerPitch), fullPitchRange.indexOf(this.state.upperPitch)+1)
-    this.setState({workingPitchRange})
+    const workingPitchRange = fullPitchRange.slice(fullPitchRange.indexOf(this.state.lowerPitch), fullPitchRange.indexOf(upperPitch)+1)
+    this.props.workingPitchRangeChange(workingPitchRange)
   }
 
   componentWillMount() {
@@ -57,13 +59,6 @@ export class PitchRangeOptions extends Component {
     this.setState({fullPitchRange})
   }
   render() {
-    const fullPitchRangeOptions = this.state.fullPitchRange.map( (pitch) => {
-      return(
-        <option value={pitch}>
-          {pitch}
-        </option>
-      )
-    })
     return (
      <div id="pitchRangeOptions">
       <b>Pitch Range</b> <br />
