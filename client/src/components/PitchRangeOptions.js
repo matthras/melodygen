@@ -29,15 +29,15 @@ export class PitchRangeOptions extends Component {
     this.adjustlowerPitch = this.adjustlowerPitch.bind(this);
     this.adjustupperPitch = this.adjustupperPitch.bind(this);
   }
-  adjustlowerPitch(event) {
-    const lowerPitch = event.target.value;
+  adjustlowerPitch(e) {
+    const lowerPitch = e.target.value;
     this.setState({lowerPitch})
     const fullPitchRange = this.state.fullPitchRange;
     const workingPitchRange = fullPitchRange.slice(fullPitchRange.indexOf(lowerPitch), fullPitchRange.indexOf(this.state.upperPitch)+1)
     this.props.workingPitchRangeChange(workingPitchRange)
   }
-  adjustupperPitch(event) {
-    const upperPitch = event.target.value;
+  adjustupperPitch(e) {
+    const upperPitch = e.target.value;
     this.setState({upperPitch})
     const fullPitchRange = this.state.fullPitchRange;
     const workingPitchRange = fullPitchRange.slice(fullPitchRange.indexOf(this.state.lowerPitch), fullPitchRange.indexOf(upperPitch)+1)
