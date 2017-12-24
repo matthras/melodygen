@@ -22,6 +22,8 @@ class App extends Component {
       noteLengthClasses: [1, 2, 4, 8, 16], // Whole note, minim, crotchet, quaver, semiquaver.
       // Initial Conditions
       workingPitchRange: ['c/4','d/4','e/4', 'f/4', 'g/4', 'a/4', 'b/4', 'c/5'],
+      keySignature: 'C major',
+      nSharpsFlats: 0,
       markovChain: [
         [0.2, 0.3, 0.3, 0, 0.2, 0, 0, 0],
         [0.25, 0.25, 0.25, 0.25, 0, 0, 0, 0],
@@ -49,6 +51,8 @@ class App extends Component {
     this.beatValueChange = this.beatValueChange.bind(this);
     this.markovchainChange = this.markovchainChange.bind(this);
     this.workingPitchRangeChange = this.workingPitchRangeChange.bind(this);
+    this.keySignatureChange = this.keySignatureChange.bind(this);
+    this.nSharpsFlatsChange = this.nSharpsFlatsChange.bind(this);
   }
   preventRendering() {
     this.setState({renderNewScore: false})
@@ -76,6 +80,12 @@ class App extends Component {
   }
   workingPitchRangeChange(workingPitchRange) {
     this.setState({workingPitchRange});
+  }
+  keySignatureChange(keySignature) {
+    this.setState({keySignature})
+  }
+  nSharpsFlatsChange(nSharpsFlats) {
+    this.setState({nSharpsFlats})
   }
   markovchainChange(row, rowIndex) {
     let newMarkovChain = this.state.markovChain;
@@ -176,6 +186,10 @@ class App extends Component {
             keySignatures={this.state.keySignatures}
             fullPitchRange={this.state.fullPitchRange}
             workingPitchRange={this.state.workingPitchRange}
+            keySignature={this.state.keySignature}
+            keySignatureChange={this.keySignatureChange}
+            nSharpsFlats={this.state.nSharpsFlats}
+            nSharpsFlatsChange={this.nSharpsFlatsChange}
           />
       </div>
     );

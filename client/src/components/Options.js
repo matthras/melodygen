@@ -54,7 +54,12 @@ class Options extends Component {
           </select>
         </div>
         <div className="four columns">
-          <KeySignatureOptions />
+          <KeySignatureOptions
+            keySignature={this.props.keySignature} 
+            keySignatureChange={this.props.keySignatureChange}
+            nSharpsFlats={this.props.nSharpsFlats}
+            nSharpsFlatsChange={this.props.nSharpsFlatsChange}
+          />
           <PitchRangeOptions 
             fullPitchRange={this.props.fullPitchRange}
             workingPitchRangeChange={this.props.workingPitchRangeChange}

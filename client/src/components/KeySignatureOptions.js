@@ -8,25 +8,32 @@ export class KeySignatureOptions extends Component{
       majorKeys: ['Cb', 'Gb', 'Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#'],
       minorKeys: ['Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#']
     }
+    this.keySignatureChange = this.keySignatureChange.bind(this);
+  }
+  keySignatureChange(e) {
+    this.props.keySignatureChange(e.target.value)
+  }
+  nSharpsFlatsChange(e) {
+    this.props.nSharpsFlatsChange(e.target.value)
   }
   render() {
     const nSharpFlatsOptions = this.state.nSharpsFlats.map( (num) => {
       return (
         <option value={num} key={num}>
-          {(num < 0) ? Math.abs(num)+' flats' : num + ' sharps'} 
+          {(num === 0) ? '0 sharps/flats' : (num < 0) ? Math.abs(num)+' flats' : num + ' sharps'} 
         </option>
       )
     })
     const majorOptions = this.state.majorKeys.map( (key) => {
       return (
-        <option value={key} key={key}>
+        <option value={key + ' major'} key={key}>
           {key + ' major'}
         </option>
       )
     })
     const minorOptions = this.state.minorKeys.map( (key) => {
       return(
-        <option value={key} key={key}>
+        <option value={key + ' minor'} key={key}>
           {key + ' minor'}
         </option>
       )
@@ -36,10 +43,10 @@ export class KeySignatureOptions extends Component{
         <b>Key Signature</b> <br />
         [Feature Under Construction!] <br />
         [Only C Major For Now!] <br />
-        <select value={this.props.nSharpsFlats}>
+        <select value={this.props.nSharpsFlats} onChange={this.nSharpsFlatsChange}>
           {nSharpFlatsOptions}
         </select>
-        <select>
+        <select value={this.props.keySignature} onChange={this.keySignatureChange}>
           {majorOptions}
           {minorOptions}
         </select>
