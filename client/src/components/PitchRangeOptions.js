@@ -26,17 +26,15 @@ export class PitchRangeOptions extends Component {
       pitchClasses: ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#','b'],
       fullPitchRange: [], // Generated in componentWillMount()
     }
-    this.adjustlowerPitch = this.adjustlowerPitch.bind(this);
-    this.adjustupperPitch = this.adjustupperPitch.bind(this);
   }
-  adjustlowerPitch(e) {
+  adjustlowerPitch = (e) => {
     const lowerPitch = e.target.value;
     this.setState({lowerPitch})
     const fullPitchRange = this.state.fullPitchRange;
     const workingPitchRange = fullPitchRange.slice(fullPitchRange.indexOf(lowerPitch), fullPitchRange.indexOf(this.state.upperPitch)+1)
     this.props.workingPitchRangeChange(workingPitchRange)
   }
-  adjustupperPitch(e) {
+  adjustupperPitch = (e) => {
     const upperPitch = e.target.value;
     this.setState({upperPitch})
     const fullPitchRange = this.state.fullPitchRange;

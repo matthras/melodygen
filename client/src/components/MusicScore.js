@@ -10,23 +10,15 @@ import { Renderer } from '../vexflow/renderer';
 import { Beam } from '../vexflow/beam';
 
 class MusicScore extends Component {
-  constructor(props) {
-    super(props);
-    this.generateMusicScore = this.generateMusicScore.bind(this);
-    this.constructContext = this.constructContext.bind(this);
-    this.constructStaves = this.constructStaves.bind(this);
-    this.constructNotes = this.constructNotes.bind(this);
-    this.constructVoices = this.constructVoices.bind(this);
-  }
 
-  constructContext(nBars) {
+  constructContext = (nBars) => {
     const div = document.getElementById("musicScore");
     let renderer = new Renderer(div, 3);
     renderer.resize(820,125*(Math.ceil(nBars/2)));
     return renderer.getContext();
   }
   // Need to add key signature
-  constructStaves(nBars, clef, context) {
+  constructStaves = (nBars, clef, context) => {
     let horizontalPosition = 10;
     let verticalPosition = 20;
     let staves = [];
@@ -51,7 +43,7 @@ class MusicScore extends Component {
     return staves;
   }
 
-  constructNotes(nBars, noteSequence, rhythmSequence) {
+  constructNotes = (nBars, noteSequence, rhythmSequence) => {
     let notes = [];
     for(let bar = 0; bar < nBars; bar++){
       let barNotes = [];
@@ -67,7 +59,7 @@ class MusicScore extends Component {
     return notes;
   }
 
-  constructVoices(nBars, nBeats, beatValue, notes) {
+  constructVoices = (nBars, nBeats, beatValue, notes) => {
     let voices = [];
     for(let bar = 0; bar < nBars; bar++) {
       const voice = new Voice({
@@ -79,7 +71,7 @@ class MusicScore extends Component {
     return voices;
   }
 
-  constructBeams(nBars, notes){
+  constructBeams = (nBars, notes) => {
     let beams = [];
     for(let bar = 0; bar < nBars; bar++) {
       beams.push(Beam.generateBeams(notes[bar]));
@@ -87,7 +79,7 @@ class MusicScore extends Component {
     return beams;   
   }
 
-  generateMusicScore() {    
+  generateMusicScore = () => {    
     if(this.props.renderNewScore) {
       const nBars = this.props.nBars;
       let context = this.constructContext(nBars);

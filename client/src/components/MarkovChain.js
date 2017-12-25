@@ -41,11 +41,8 @@ export class MarkovChain extends Component {
     this.state = {
       revealMarkovChain: false
     }
-    this.markovchainVisibility = this.markovchainVisibility.bind(this)
   }
-  markovchainVisibility() {
-    this.setState({revealMarkovChain: !this.state.revealMarkovChain})
-  }
+  markovchainVisibility = () => {this.setState({revealMarkovChain: !this.state.revealMarkovChain})}
 
   render() {
     const topLabels = this.props.workingPitchRange.map( (label, index) => 

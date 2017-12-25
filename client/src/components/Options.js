@@ -5,24 +5,9 @@ import { KeySignatureOptions } from './KeySignatureOptions.js';
 import { PitchRangeOptions } from './PitchRangeOptions.js';
 
 class Options extends Component {
-  constructor(props){
-    super(props);
-    this.nBarsChange = this.nBarsChange.bind(this);
-    this.nBeatsChange = this.nBeatsChange.bind(this);
-    this.beatValueChange = this.beatValueChange.bind(this);
-  }
-
-  nBarsChange(e){
-    this.props.nBarsChange(e.target.value);
-  }
-
-  nBeatsChange(e) {
-    this.props.nBeatsChange(e.target.value);
-  }
-
-  beatValueChange(e) {
-    this.props.beatValueChange(e.target.value);
-  }
+  nBarsChange = (e) => {this.props.nBarsChange(e.target.value)}
+  nBeatsChange = (e) => {this.props.nBeatsChange(e.target.value)}
+  beatValueChange = (e) => {this.props.beatValueChange(e.target.value)}
 
   render() {
     return(

@@ -8,14 +8,10 @@ export class KeySignatureOptions extends Component{
       majorKeys: ['Cb', 'Gb', 'Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#'],
       minorKeys: ['Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#']
     }
-    this.keySignatureChange = this.keySignatureChange.bind(this);
   }
-  keySignatureChange(e) {
-    this.props.keySignatureChange(e.target.value)
-  }
-  nSharpsFlatsChange(e) {
-    this.props.nSharpsFlatsChange(e.target.value)
-  }
+  keySignatureChange = (e) => {this.props.keySignatureChange(e.target.value)}
+  nSharpsFlatsChange = (e) => {this.props.nSharpsFlatsChange(e.target.value)}
+  
   render() {
     const nSharpFlatsOptions = this.state.nSharpsFlats.map( (num) => {
       return (
