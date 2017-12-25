@@ -39,26 +39,9 @@ class App extends Component {
       nBars: 4,
       renderNewScore: true
     }
-    this.generateRhythmSequence = this.generateRhythmSequence.bind(this);
-    this.generateNewScore = this.generateNewScore.bind(this);
-    this.getNextPitch = this.getNextPitch.bind(this);
-    this.startingPitch = this.startingPitch.bind(this);
-    this.preventRendering = this.preventRendering.bind(this);
-    this.enharmonicEquivalent = this.enharmonicEquivalent.bind(this);
-    // Change handlers for <Options>
-    this.nBarsChange = this.nBarsChange.bind(this);
-    this.nBeatsChange = this.nBeatsChange.bind(this);
-    this.beatValueChange = this.beatValueChange.bind(this);
-    this.markovchainChange = this.markovchainChange.bind(this);
-    this.workingPitchRangeChange = this.workingPitchRangeChange.bind(this);
-    this.keySignatureChange = this.keySignatureChange.bind(this);
-    this.nSharpsFlatsChange = this.nSharpsFlatsChange.bind(this);
-  }
-  preventRendering() {
-    this.setState({renderNewScore: false})
   }
   // Takes a sharpened or flattened note, and returns the enharmonic equivalent.
-  enharmonicEquivalent(note) {
+  enharmonicEquivalent = (note) => {
     const splitNote = note.split('');
     const accidental = (splitNote[1]==='#') ? 'b' : '#';
     let newNote = (splitNote[1]==='#') ? splitNote[0].charCodeAt(0)+1 : splitNote[0].charCodeAt(0)-1;
@@ -69,38 +52,27 @@ class App extends Component {
     }
     return String.fromCharCode(newNote)+accidental;
   }
-  nBarsChange(num) {
-    this.setState({nBars: num});
-  }
-  nBeatsChange(num) {
-    this.setState({nBeats: num});
-  }
-  beatValueChange(num) {
-    this.setState({beatValue: num});
-  }
-  workingPitchRangeChange(workingPitchRange) {
-    this.setState({workingPitchRange});
-  }
-  keySignatureChange(keySignature) {
-    this.setState({keySignature})
-  }
-  nSharpsFlatsChange(nSharpsFlats) {
-    this.setState({nSharpsFlats})
-  }
-  markovchainChange(row, rowIndex) {
-    let newMarkovChain = this.state.markovChain;
-    newMarkovChain[rowIndex] = row;
-    this.setState({markovChain: newMarkovChain})
+  preventRendering = () => {this.setState({renderNewScore: false})}
+  nBarsChange = (nBars) => {this.setState({nBars})}
+  nBeatsChange = (nBeats) => {this.setState({nBeats})}
+  beatValueChange = (beatValue) => {this.setState({beatValue})}
+  workingPitchRangeChange = (workingPitchRange) => {this.setState({workingPitchRange})}
+  keySignatureChange = (keySignature) => {this.setState({keySignature})}
+  nSharpsFlatsChange = (nSharpsFlats) => {this.setState({nSharpsFlats})}
+  markovchainChange = (row, rowIndex) => {
+    let markovChain = this.state.markovChain;
+    markovChain[rowIndex] = row;
+    this.setState({markovChain});
   }
 
-  startingPitch() {
+  startingPitch = () => {
     // Random roll for anacrusis. Maybe aim for 0.25 chance for an anacrusis?
     // If there is to be an anacrusis, return the dominant; else return the tonic.
     // Need to verify music theory concerning other possible anacrusis notes.
     return this.state.anacrusis ? 'g/4' : 'c/4'
   }
 
-  getNextPitch(currentPitch) {
+  getNextPitch = (currentPitch) => {
     var markovChainRow = this.state.markovChain[currentPitch];
     var diceRoll = Math.random();
     var probabilityUpperBound = markovChainRow[0];
@@ -115,7 +87,7 @@ class App extends Component {
   }
 
   // Generates a new rhythm - at the moment it's designed to have one element per beat, so combinations such as quaver-quaver, or 4 semiquavers, are all contained within subarrays. One flattened array per bar.
-  generateRhythmSequence() {
+  generateRhythmSequence = () => {
     let newRhythmSequence = [];
     for(let bar = 0; bar < this.state.nBars; bar++){
       let rhythmBar = [];
@@ -127,7 +99,7 @@ class App extends Component {
     return newRhythmSequence;
   }
 
-  generateNewScore() {
+  generateNewScore = () => {
     // Before re-rendering a new score, remove all instances of old score by removing all child nodes. 
     const musicScoreDiv = document.getElementById("musicScore");
     while(musicScoreDiv.firstChild) {
