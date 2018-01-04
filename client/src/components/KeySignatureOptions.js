@@ -5,11 +5,17 @@ export class KeySignatureOptions extends Component{
     super(props)
     this.state={
       nSharpsFlats: [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7],
-      majorKeys: ['Cb', 'Gb', 'Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#'],
+      majorKeys: ['Fb', 'Cb', 'Gb', 'Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#'],
       minorKeys: ['Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#']
     }
   }
-  keySignatureChange = (e) => {this.props.keySignatureChange(e.target.value)}
+  keySignatureChange = (e) => {
+    this.props.keySignatureChange(e.target.value);
+    // When I pick a key, I want it to change the # of sharps/flats automatically
+    const key = e.target.value.split(' ');
+    const index = (key[1] === "major") ? this.state.majorKeys.indexOf(key[0]) : this.state.minorKeys.indexOf(key[0])
+    this.props.nSharpsFlatsChange(this.state.nSharpsFlats[index])
+  }
   nSharpsFlatsChange = (e) => {this.props.nSharpsFlatsChange(e.target.value)}
   
   render() {
